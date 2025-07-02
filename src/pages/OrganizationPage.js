@@ -91,7 +91,6 @@ const OrganizationPage = () => {
         setIsSaving(true); 
         try {
             const orgData = await getOrganizationByIdApi(orgId, user.token);
-            console.log("Get By Id Data - " , orgData);
             if (orgData) {
                 setEditingOrganization(orgData);
                 setOrganizationForm({
@@ -265,7 +264,7 @@ const OrganizationPage = () => {
                     paddingBottom: '20px' }}>
                 <header style={{ padding: '1.5rem', borderBottom: '1px solid #eee', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', color: '#333', margin: 0 }}>Organization Management</h2>
-                    {canCreateOrg && !editingorganization && (
+                    {canCreateOrg && (
                         <button
                         onClick={handleAddOrgClick}
                         style={{

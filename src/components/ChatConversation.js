@@ -35,7 +35,6 @@ const ChatConversation = ({
     const isAcceptableByCurrentUser = currentChatHistory && currentChatHistory.acceptAssigned === false
 
     const handleRateAgent = async () => {
-        console.log("Start Generating URL");
         if (!selectedChat || !user) {
             alert('Please select a chat and ensure user is logged in to rate.');
             return;

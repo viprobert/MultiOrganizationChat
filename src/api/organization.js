@@ -29,13 +29,12 @@ export const getAllOrganizationsApi = async (orgId,token) => {
     }
 
     const data = await response.json();
-    return data; 
+    return data.data; 
   } catch (error) {
     console.error("Error fetching all organizations:", error);
     throw error;
   }
 };
-
 
 export const createOrganizationApi = async (orgData, token) => {
   try {
@@ -53,15 +52,14 @@ export const createOrganizationApi = async (orgData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    // const data = await response.json();
+     const data = await response.json();
     // return data;
-    return { success: true, message: "Organization created successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating organization:", error);
     throw error;
   }
 };
-
 
 export const getOrganizationByIdApi = async (id, token) => {
   try {
@@ -80,14 +78,12 @@ export const getOrganizationByIdApi = async (id, token) => {
     }
 
     const data = await response.json();
-    return data;
-    // && data.length > 0 ? data[0] : null;
+    return data.data;
   } catch (error) {
     console.error("Error fetching organization by ID:", error);
     throw error;
   }
 };
-
 
 export const updateOrganizationApi = async (orgData, token) => {
   try {
@@ -102,11 +98,10 @@ export const updateOrganizationApi = async (orgData, token) => {
     });
 
     if (!response.ok) {
-      //const errorData = await response.json();
       throw new Error(response );
     }
-
-    return { success: true, message: "Organization updated successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error updating organization:", error);
     throw error;
@@ -128,8 +123,8 @@ export const deleteOrganizationApi = async (id, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Organization deleted successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error deleting organization:", error);
     throw error;

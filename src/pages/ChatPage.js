@@ -45,7 +45,7 @@ const ChatPage = () => {
 
     const [currentPage, setCurrentPage] = useState(1);
     const [hasMoreChats, setHasMoreChats] = useState(true);
-    const CHATS_PER_PAGE = 40;
+    const CHATS_PER_PAGE = 10;
 
     const [selectedChannelId, setSelectedChannelId] = useState(null);
     const [selectedChatStatusFilter, setSelectedChatStatusFilter] = useState('All'); // 'All', 'Unread', 'Pending', 'Assigned', 'InProgress', 'Closed'
@@ -206,6 +206,7 @@ const ChatPage = () => {
                 return updatedChats;
             } else {
                 setCurrentPage(1);
+                console.log("from hanel receivce message");
                 fetchChatList(1, true);
                 return prevChats; 
             }
@@ -253,7 +254,7 @@ const ChatPage = () => {
         try {
             await AcceptMessageApi(user.orgId, chatId, user.userId, false, user.token);
             setChatList(prevChatList => prevChatList.filter(chat => chat.chatId !== chatId));
-
+            console.log("From handle Reject chat");
             await fetchChatList(1, true);
         } catch (error) {
             console.error("Error rejecting chat:", error);
@@ -306,6 +307,7 @@ const ChatPage = () => {
             }
         };
         updateAgentCounts();
+        console.log("From handle chat update");
         fetchChatList();
     }, [user, fetchChatList]);
 
@@ -316,8 +318,10 @@ const ChatPage = () => {
         handleChatUpdated
     );
 
+
     useEffect(() => {
         if (!loadingDashboard && !dashboardError) {
+            console.log("fromuseeffect - Line 323");
             fetchChatList(1, true);
             setCurrentPage(1);
         }
@@ -361,7 +365,6 @@ const ChatPage = () => {
                 assignedAgentId: history.assignedAgentId
             }));
 
-            console.log("selectedChatId when select the chat",chat.chatId);
             await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.[0]?.id || null, user.token);
             
             setChatList(prevChats => prevChats.map(c =>
@@ -411,6 +414,7 @@ const ChatPage = () => {
                 ...prevSelectedChat,
                 TagId: tagId
             }));
+            console.log("from handle set tag");
             fetchChatList();
         } catch (err) {
             console.error("Error setting tag:", err);
@@ -436,6 +440,7 @@ const ChatPage = () => {
                 ...prevSelectedChat,
                 TagId: null
             })); 
+            console.log("from handle remove tag");
             fetchChatList();
         } catch (err) {
             console.error("Error removing tag:", err);
@@ -455,6 +460,7 @@ const ChatPage = () => {
                 c.chatId === selectedChat.chatId ? { ...c, assignedAgentId: agentId } : c
             ));
             setSelectedChat(prev => ({ ...prev, assignedAgentId: agentId }));
+            console.log("from handle assign agent");
             fetchChatList();
         } catch (err) {
             console.error("Error assigning chat:", err);
@@ -477,6 +483,7 @@ const ChatPage = () => {
                 ...prevSelectedChat,
                 ChatStatus: status
             }));
+            console.log("from handle change status");
             fetchChatList();
         } catch (err) {
             console.error("Error changing chat status:", err);
@@ -529,6 +536,7 @@ const ChatPage = () => {
 
     const handleLoadMoreChats = () => {
         setCurrentPage(prevPage => prevPage + 1);
+        console.log("currentpage", currentPage);
     };
 
     const handleChannelFilterChange = (channelId) => {
@@ -562,6 +570,7 @@ const ChatPage = () => {
     };
 
     useEffect(() => {
+        console.log("from useeffect - line 573");
         if (currentPage > 1) {
             fetchChatList(currentPage, false);
         }

@@ -79,8 +79,6 @@ const CustomerRatingPage = () => {
             platform: platform
         };
 
-        console.log("Submitting Rating Payload:", payload);
-
         try {
             const response = await customerRatingApi(payload); 
                 setSubmissionStatus('success');

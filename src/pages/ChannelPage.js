@@ -52,7 +52,6 @@ const ChannelPage = () => {
     };
 
     const fetchChannels = async () => {
-        console.log("user token",user?.token);
         if (authLoading || !user?.token) return;
 
         setLoading(true);
@@ -306,8 +305,8 @@ const ChannelPage = () => {
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{channel.platform}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{truncateText(channel.accessToken, 15)}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{truncateText(channel.webhookSecret, 15)}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{channel.otherConfigJson}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{channel.externalChannelId}</td>
+                                            <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{truncateText(channel.otherConfigJson, 15)}</td>
+                                            <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{truncateText(channel.externalChannelId,20)}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>
                                                 <span style={{
                                                     backgroundColor: channel.isActive ? '#d4edda' : '#f8d7da',

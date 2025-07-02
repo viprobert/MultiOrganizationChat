@@ -21,7 +21,7 @@ export const getChatReportAPI = async (reportRequest, token) => {
     }
 
     const data = await response.json();
-    return { success: true, data: data };
+    return { success: true, data: data.data };
   } catch (error) {
     console.error("Error chat report:", error);
     throw error;
@@ -46,7 +46,7 @@ export const getAgentReportAPI = async (reportRequest, token) => {
     }
 
     const data = await response.json();
-    return { success: true, data: data };
+    return { success: true, data: data.data };
   } catch (error) {
     console.error("Error getting agent report:", error);
     throw error;
@@ -71,7 +71,7 @@ export const getTagReportAPI = async (reportRequest, token) => {
     }
 
     const data = await response.json();
-    return { success: true, data: data };
+    return { success: true, data: data.data };
   } catch (error) {
     console.error("Error getting Tag report:", error);
     throw error;
@@ -96,7 +96,7 @@ export const getStatusReportAPI = async (reportRequest, token) => {
     }
 
     const data = await response.json();
-    return { success: true, data: data };
+    return { success: true, data: data.data };
   }
   catch(error) {
     console.error('Error getting Status report:', error)

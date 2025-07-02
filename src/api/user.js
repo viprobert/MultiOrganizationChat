@@ -28,7 +28,7 @@ export const getAllUsersApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching all users:", error);
     throw error;
@@ -51,9 +51,9 @@ export const createUserApi = async (userData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    // const data = await response.json();
+     const data = await response.json();
     // return data;
-    return { success: true, message: "User created successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating user:", error);
     throw error;
@@ -77,7 +77,7 @@ export const getUserByIdApi = async (id, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching user by Id:", error);
     throw error;
@@ -100,8 +100,8 @@ export const updateUserApi = async (userData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "User updated successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error updating user:", error);
     throw error;
@@ -123,8 +123,8 @@ export const deleteUserApi = async (id, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "User deleted successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error deleting user:", error);
     throw error;

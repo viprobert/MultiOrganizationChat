@@ -138,8 +138,6 @@ const AssignChatsPage = () => {
 
     const handleSelectUnassignedChat = (chat) => {
         setSelectedUnassignedChat(chat);
-        //console.log("handleselectchat",chat);
-        //console.log("selectedUnassignedChat",selectedUnassignedChat);
         setAssignSuccess(false); 
         setAssignError(null);
     };
@@ -168,7 +166,6 @@ const AssignChatsPage = () => {
             setAssigning(false);
         }
     };
-    //console.log("unassignedChats",unassignedChats);
 
     return (
         <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f5f7fa' }}>

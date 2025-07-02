@@ -38,7 +38,6 @@ const TagPage = () => {
             await changeAgentStatusApi(user.userId, newStatus, user.token);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
-            console.error("Failed to change agent status:", err);
             setActionPanelError("Failed to change status: " + (err.message || "Unknown error."));
         } finally {
             setIsActionPanelLoading(false);
@@ -47,7 +46,6 @@ const TagPage = () => {
 
 
     const fetchTags = async () => {
-        console.log("user token",user?.token);
         if (authLoading || !user?.token) return;
 
         setLoading(true);

@@ -136,8 +136,6 @@ const UserRolesPage = () => {
         const { name, value, type, checked } = e.target;
         setRoleForm(prev => {
             let newValue;
-            console.log("select value", e);
-            console.log("type", type);
             if (type === 'checkbox') {
                 newValue = checked;
             }

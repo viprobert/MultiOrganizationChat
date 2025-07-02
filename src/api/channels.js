@@ -19,7 +19,7 @@ export const getAllChannelsApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching channels:", error);
     throw error;
@@ -42,9 +42,9 @@ export const createChannelApi = async (channelData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    // const data = await response.json();
+     const data = await response.json();
     // return data;
-    return { success: true, message: "Channel created successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating channel:", error);
     throw error;
@@ -68,7 +68,7 @@ export const getChannelByIdApi = async (id, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching channel by ID:", error);
     throw error;
@@ -91,8 +91,8 @@ export const updateChannelApi = async (channelData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Channel updated successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error updating channel:", error);
     throw error;
@@ -114,8 +114,8 @@ export const deleteChannelApi = async (id, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Channel deleted successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message  };
   } catch (error) {
     console.error("Error deleting channel:", error);
     throw error;

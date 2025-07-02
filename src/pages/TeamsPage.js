@@ -50,7 +50,6 @@ const TeamsPage = () => {
     };
 
     const fetchTeams = async () => {
-        console.log("user token",user?.token);
         if (authLoading || !user?.token) return;
 
         setLoading(true);

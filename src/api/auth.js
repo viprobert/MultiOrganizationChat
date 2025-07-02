@@ -20,8 +20,7 @@ export const loginApi = async (username, password) => {
     }
     
     const data = await response.json();
-    console.log("Data after login", data);
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error during login API call:", error);
     throw error;
@@ -53,7 +52,7 @@ export const changeAgentStatusApi = async (agentId, isOnline, token) => {
   }
 };
 
-export const generateTwoFactorSetupApi = async (token) => {
+export const generateTwoFactorSetupApi = async (userId, token) => {
   try{
     const response = await fetch(`${API_BASE_URL}/Authentication/twofactor/generate-setup`, {
       method: 'POST',
@@ -61,7 +60,8 @@ export const generateTwoFactorSetupApi = async (token) => {
         'Content-Type': 'application/json',
         //'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': '69420',
-      }
+      },
+      body: JSON.stringify({ userId }),
     });
     if (!response.ok){
       const errorData = await response.json();
@@ -91,7 +91,7 @@ export const verifyTwoFactorSetupApi = async (userId, code, token ) => {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    return data.response;
+    return data.data;
   } catch (error){
     console.error("Error Verify Two Factor Setup API call:", error);
     throw error;
@@ -115,15 +115,14 @@ export const completeTwoFactorSetupApi = async (userId, code) => {
     }
     
     const data = await response.json();
-    console.log(data);
-    return data;
+    return data.data;
   } catch (error){
     console.error("Error Verify Two Factor Setup API call:", error);
     throw error;
   }
 };
 
-export const disableTwoFactorApi = async (code, token) => {
+export const disableTwoFactorApi = async (userId, code, token) => {
   try{
     const response = await fetch(`${API_BASE_URL}/Authentication/twofactor/disable`,{
       method: 'POST',
@@ -132,14 +131,14 @@ export const disableTwoFactorApi = async (code, token) => {
         //'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': '69420',
       },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ userId, code }),
     });
     if (!response.ok){
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    return data.response;
+    return data.data;
   } catch (error){
     console.error("Error disable Two Factor API call:", error);
     throw error;
@@ -162,7 +161,7 @@ export const checkUserApi = async (email) => {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    return data.response;
+    return data.data;
   } catch (error){
     console.error("Error checking User By Email API call:", error);
     throw error;
@@ -186,7 +185,7 @@ export const forgetPasswordApi = async (email, otp, password) => {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error){
     console.error("Error forget password API call:", error);
     throw error;

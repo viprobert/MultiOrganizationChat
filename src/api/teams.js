@@ -19,7 +19,7 @@ export const getTeamsAndAgentsApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data; 
+    return data.data; 
   } catch (error) {
     console.error("Error fetching teams and agents:", error);
     throw error;
@@ -52,7 +52,7 @@ export const getAllTeamsApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching all teams:", error);
     throw error;
@@ -75,9 +75,9 @@ export const createTeamApi = async (teamData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    // const data = await response.json();
+     const data = await response.json();
     // return data;
-    return { success: true, message: "Team created successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating team:", error);
     throw error;
@@ -101,7 +101,7 @@ export const getTeamByIdApi = async (id, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching team by ID:", error);
     throw error;
@@ -124,8 +124,9 @@ export const updateTeamApi = async (teamData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
+    const data = await response.json();
 
-    return { success: true, message: "Team updated successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error updating team:", error);
     throw error;
@@ -147,8 +148,8 @@ export const deleteTeamApi = async (id, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Team deleted successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error deleting team:", error);
     throw error;

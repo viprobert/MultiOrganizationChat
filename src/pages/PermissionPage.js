@@ -47,7 +47,6 @@ const PermissionPage = () => {
     };
     
     const fetchPerms = async () => {
-        console.log("user token",user?.token);
         if (authLoading || !user?.token) return;
 
         setLoading(true);

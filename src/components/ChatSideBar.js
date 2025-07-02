@@ -82,7 +82,7 @@ const ChatSideBar = ({
                             borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600', boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
                             backgroundColor: agentOnlineStatus ? '#28a745' : '#dc3545', color: 'white', border: 'none',
                             cursor: isActionPanelLoading ? 'not-allowed' : 'pointer',
-                            transition: 'background-color 0.2s ease', marginTop: '5px'
+                            transition: 'background-color 0.2s ease', marginTop: '10px'
                         }}
                         onMouseOver={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#218838' : '#c82333'; }}
                         onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = 'transparent'; }}

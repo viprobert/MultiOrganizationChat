@@ -71,7 +71,6 @@ export const AuthProvider = ({ children }) => {
                 throw new Error("User ID not available for 2FA setup/verification completion. Cannot proceed.");
             }
             const data = await completeTwoFactorSetupApi(userIdFor2FA, code);
-            console.log("data", data);
             const userData = {
                 userId: data.userId,
                 userName: data.userName,
@@ -117,7 +116,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         try {
             if (!user?.token) throw new Error("Not authenticated.");
-            const data = await generateTwoFactorSetupApi(user.token);
+            const data = await generateTwoFactorSetupApi(user.userId, user.token);
             setLoading(false);
             return { success: true, data };
         } catch (err) {
@@ -147,7 +146,7 @@ export const AuthProvider = ({ children }) => {
         setError(null);
         try {
             if (!user?.token) throw new Error("Not authenticated.");
-            const data = await disableTwoFactorApi(code, user.token);
+            const data = await disableTwoFactorApi(user.userId, code, user.token);
             setLoading(false);
             return { success: true, data };
         } catch (err) {
@@ -179,7 +178,6 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await forgetPasswordApi(email, otp, newPassword);
             setForgotPasswordLoading(false);
-            console.log("response message",response.message);
             return { success: true, message: response.message || "Password has been reset successfully." };
         } catch (err) {
             console.error("Password reset error:", err);

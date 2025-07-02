@@ -20,13 +20,12 @@ export const getChatsByTagApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching chats by tag:", error);
     throw error;
   }
 };
-
 
 export const getAllTagsApi = async (orgId, token) => {
   try {
@@ -45,7 +44,7 @@ export const getAllTagsApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching all tags:", error);
     throw error;
@@ -116,9 +115,9 @@ export const createTagApi = async (tagData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    // const data = await response.json();
+     const data = await response.json();
     // return data;
-    return { success: true, message: "Tag created successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating tag:", error);
     throw error;
@@ -142,7 +141,7 @@ export const getTagByIdApi = async (id, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching tag by ID:", error);
     throw error;
@@ -165,8 +164,8 @@ export const updateTagApi = async (tagData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Tag updated successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error updating tag:", error);
     throw error;
@@ -188,8 +187,8 @@ export const deleteTagApi = async (id, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Tag deleted successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error deleting tag:", error);
     throw error;

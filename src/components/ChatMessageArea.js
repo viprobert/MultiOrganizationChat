@@ -19,7 +19,6 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
     const [messagesAcceptedOrRejected, setMessagesAcceptedOrRejected] = useState(false);
     const [accept, setAccept] = useState(null);
     const messagesEndRef = useRef(null);
-    console.log("chatHistory", chatHistory);
     
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -155,7 +154,7 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                                 display: 'flex',
                                 gap: '1rem',
                                 backgroundColor: 'rgba(255,255,255,0.9)',
-                                padding: '0.5rem',
+                                padding: '1rem',
                                 borderRadius: '0.5rem',
                                 boxShadow: '0 2px 5px rgba(0,0,0,0.1)'
                             }}>

@@ -19,7 +19,7 @@ export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) =>
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching assigned chats by status:", error);
     throw error;
@@ -43,7 +43,7 @@ export const getChatMessageHistoryApi = async (chatId, orgId, token) => {
     }
 
     const data = await response.json();
-    return data[0];
+    return data.data[0];
   } catch (error) {
     console.error("Error fetching chat message history:", error);
     throw error;
@@ -223,7 +223,7 @@ export const getFilteredChatsApi = async (params, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching filtered chats:", error);
     throw error;
@@ -246,8 +246,8 @@ export const customerRatingApi = async (rateData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "Rating Given successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error giving rating:", error);
     throw error;

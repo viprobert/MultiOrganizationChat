@@ -28,13 +28,12 @@ export const getAllUserRolesApi = async (orgId, token) => {
     }
 
     const data = await response.json();
-    return data; 
+    return data.data; 
   } catch (error) {
     console.error("Error fetching all user roles:", error);
     throw error;
   }
 };
-
 
 export const createUserRoleApi = async (roleData, token) => {
   try {
@@ -52,15 +51,14 @@ export const createUserRoleApi = async (roleData, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    // const data = await response.json();
+     const data = await response.json();
     // return data;
-    return { success: true, message: "User Role created successfully." };
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating user role:", error);
     throw error;
   }
 };
-
 
 export const getUserRoleByIdApi = async (id, token) => {
   try {
@@ -79,13 +77,12 @@ export const getUserRoleByIdApi = async (id, token) => {
     }
 
     const data = await response.json();
-    return data;
+    return data.data;
   } catch (error) {
     console.error("Error fetching user role by ID:", error);
     throw error;
   }
 };
-
 
 export const updateUserRoleApi = async (roleData, token) => {
   try {
@@ -104,7 +101,8 @@ export const updateUserRoleApi = async (roleData, token) => {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
-    return { success: true, message: "User Role updated successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error updating user role:", error);
     throw error;
@@ -126,8 +124,8 @@ export const deleteUserRoleApi = async (id, token) => {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-
-    return { success: true, message: "User Role deleted successfully." };
+    const data = await response.json();
+    return { success: true, message: data.data.message};
   } catch (error) {
     console.error("Error deleting user role:", error);
     throw error;
