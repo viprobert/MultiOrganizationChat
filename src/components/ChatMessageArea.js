@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faCheckCircle, faTimesCircle, faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faSpinner, faCheckCircle, faTimesCircle, faFileAlt, faLocationArrow } from '@fortawesome/free-solid-svg-icons';
 
 const formatMessageTimestamp = (timestamp) => {
     if (!timestamp) return '';
@@ -90,7 +90,7 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                     const isAgentMessage = message.senderType === 'Agent' && message.senderUserId === currentAgentId;
                     const isOtherAgentMessage = message.senderType === 'Agent' && message.senderUserId !== currentAgentId;
                     const isVideoMessage = message.messageType === 'video';
-
+                    console.log("Isvideo",isVideoMessage);
                     let bubbleStyle = {
                         maxWidth: '70%',
                         padding: '0.75rem',
@@ -205,12 +205,12 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                                 {message.messageType === 'image' && message.content ? (
                                     <img src={message.content} alt="Sent" style={{ maxWidth: '100%', borderRadius: '0.5rem' }} />
                                 ) : message.messageType === 'audio' && message.content ? (
-                                    <audio controls src={message.content} style={{ width: '100%' }}></audio>
+                                    <audio controls src={message.content}></audio>
                                 ) : message.messageType === 'video' &&  message.content ? (
-                                    <video controls src={message.content} style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '0.5rem' }}>
+                                    <video controls src={message.content} style={{ maxWidth: '100%', maxHeight: '400px', width: 'auto', height:'auto',borderRadius: '0.5rem', display:'block' }}>
                                         Your browser does not support the video tag.
                                     </video>
-                                ) : message.messageType === 'file' && message.content ? (
+                                ) : message.messageType === 'document' && message.content ? (
                                     <a 
                                         href={message.content} 
                                         target="_blank" 
@@ -221,12 +221,19 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                                             gap: '0.5rem', 
                                             color: '#007bff', 
                                             textDecoration: 'underline',
-                                            wordBreak: 'break-all'
+                                            wordBreak: 'break-all',
+                                            color: 'white'
                                         }}
                                     >
                                         <FontAwesomeIcon icon={faFileAlt} />
                                         Download File
                                     </a>
+                                ) : message.messageType === 'location' && message.content ? (
+                                    <div sx={{ display: 'flex', alignItems: 'center' }}>
+                                        <a href = {message.content} target='blank' style={{textDecoration: 'none'}}>
+                                        <FontAwesomeIcon icon={faLocationArrow} sx={{ mr: 0.5 }} /> Location
+                                        </a>
+                                    </div>   
                                 ) : (
                                     <p style={{ margin: 0, fontSize: '0.9rem' }}>{message.content}</p>
                                 )}

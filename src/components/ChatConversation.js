@@ -64,11 +64,13 @@ const ChatConversation = ({
         const shortUrl = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(ratingUrl)}`).then(res => res.text());
         const message = `⭐Please Rate Me Here:\n${shortUrl}`;
 
+        //const message = `⭐Please Rate Me Here:\n${ratingUrl}`;
+
         const messageData = {
             orgId: user.orgId,
             channelId: selectedChat.channelConfig,
             chatId: selectedChat.chatId,
-            externalSenderId: user.userId,
+            externalSenderId: selectedChat.customerExternalId,
             platform: selectedChat.platfrom,
             type: "text",
             text: message,

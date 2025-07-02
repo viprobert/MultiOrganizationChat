@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTag, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { faTag, faPaperPlane, faImage, faFileAudio, faLocationArrow, faIcons, faVideo, faFile } from '@fortawesome/free-solid-svg-icons';
 
 const formatTimestamp = (timestamp) => {
     if (!timestamp) return 'N/A';
@@ -16,6 +16,58 @@ const formatTimestamp = (timestamp) => {
     };
     return new Intl.DateTimeFormat('en-US', options).format(date);
 };
+
+const getLatestMessagePreview = (message) => {
+    console.log("message to list view", message);
+    if (message.messageType === "text"){
+     return(
+        message.contenet
+      )
+    }
+    else if (message.messageType === "image"){
+      return(
+      <div sx={{ display: 'flex', alignItems: 'center' }}>
+        <FontAwesomeIcon icon={faImage} sx={{ mr: 0.5 }} /> Image
+      </div>
+      )
+    }
+    else if (message.messageType === "audio"){
+      return(
+      <div sx={{ display: 'flex', alignItems: 'center' }}>
+         <FontAwesomeIcon icon={faFileAudio} sx={{ mr: 0.5 }} /> Audio
+      </div>
+      )
+    }
+    else if (message.messageType === "video"){
+      return(
+      <div sx={{ display: 'flex', alignItems: 'center' }}>
+         <FontAwesomeIcon icon={faVideo} sx={{ mr: 0.5 }} /> Video
+      </div>
+      )
+    }
+    else if (message.messageType === "document"){
+      return(
+      <div sx={{ display: 'flex', alignItems: 'center' }}>
+         <FontAwesomeIcon icon={faFile} sx={{ mr: 0.5 }} /> Document
+      </div>
+      )
+    }
+    else if (message.messageType === "location"){
+      return(
+      <div sx={{ display: 'flex', alignItems: 'center' }}>
+        <FontAwesomeIcon icon={faLocationArrow} sx={{ mr: 0.5 }} /> Location
+      </div>
+      )
+    }
+    else if (message.messageType === "sticker"){
+      return (
+          <div sx={{ display: 'flex', alignItems: 'center' }}>
+            <FontAwesomeIcon icon={faIcons} sx={{ mr: 0.5 }} /> Sticker
+          </div>
+        )
+    }        
+        return message.content;
+  };
 
 const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons }) => {
      const currentTagName = chat?.tagId
@@ -60,7 +112,8 @@ const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons 
                         overflowWrap: 'break-word',
                         marginTop: '0.25rem'
                     }}>
-                        {chat.chatMessage?.content || 'No messages'}
+                        {getLatestMessagePreview(chat.chatMessage) || 'No messages'}
+                        {/* {chat.chatMessage?.content || 'No messages'} */}
                     </p>
                     <p style={{ fontSize: '0.75rem', color: '#777', marginTop: '0.25rem' }}>
                         {formatTimestamp(chat.latestMsgTime)}

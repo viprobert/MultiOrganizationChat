@@ -38,10 +38,29 @@ const MessageInput = ({ onSendMessage, isLoading }) => {
                 reader.onloadend = () => {
                     const base64String = reader.result;
                     let messageType = 'text';
+                    let audioDuration = 0;
+                    let fileSize = selectedFile.size;
                     if (selectedFile.type.startsWith('image/')) {
                         messageType = 'image';
                     } else if (selectedFile.type.startsWith('audio/')) {
                         messageType = 'audio';
+                        const audio = new Audio();
+                        audio.src = base64String; 
+
+                        audio.onloadedmetadata = () => {
+                            audioDuration = Math.round(audio.duration * 1000);
+                            onSendMessage(base64String, messageType, selectedFile.name, selectedFile.type, audioDuration);
+                            handleClearFile();
+                            setMessage('');
+                        };
+
+                        audio.onerror = (error) => {
+                            console.error("Error loading audio metadata:", error);
+                            onSendMessage(base64String, messageType, selectedFile.name, selectedFile.type, audioDuration );
+                            handleClearFile();
+                            setMessage('');
+                        };
+                        return;
                     } else if (selectedFile.type.startsWith('application/')){
                         messageType = 'document';
                     } else if (selectedFile.type.startsWith('video/')){
@@ -51,7 +70,7 @@ const MessageInput = ({ onSendMessage, isLoading }) => {
                     const fileName = selectedFile.name;
                     const fileType = selectedFile.type;
 
-                    onSendMessage(base64String, messageType, fileName, fileType);
+                    onSendMessage(base64String, messageType, fileName, fileType, audioDuration, fileSize);
                     handleClearFile();
                     setMessage('');
                 };

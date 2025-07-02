@@ -321,7 +321,7 @@ const ChatSideBar = ({
                                 onMouseOver={e => { if (selectedChatStatusFilter !== 'All') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                 onMouseOut={e => { if (selectedChatStatusFilter !== 'All') e.currentTarget.style.backgroundColor = 'transparent'; }}
                             >
-                                <span>All Assigned</span>
+                                <span>All</span>
                                 <span style={{ backgroundColor: '#cce5ff', color: '#004085', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600' }}>
                                     {agentAssignedChatsCounts.all}
                                 </span>

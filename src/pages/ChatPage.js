@@ -121,7 +121,7 @@ const ChatPage = () => {
         } finally {
             setChatListLoading(false);
         }
-    }, [user, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, selectedChat, currentPage]);
+    }, [user, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, selectedChat]);
 
     const fetchAgentCounts = useCallback(async () => {
         if (!user?.orgId || !user?.token || !user?.userId) {
@@ -206,7 +206,6 @@ const ChatPage = () => {
                 return updatedChats;
             } else {
                 setCurrentPage(1);
-                console.log("from hanel receivce message");
                 fetchChatList(1, true);
                 return prevChats; 
             }
@@ -254,7 +253,6 @@ const ChatPage = () => {
         try {
             await AcceptMessageApi(user.orgId, chatId, user.userId, false, user.token);
             setChatList(prevChatList => prevChatList.filter(chat => chat.chatId !== chatId));
-            console.log("From handle Reject chat");
             await fetchChatList(1, true);
         } catch (error) {
             console.error("Error rejecting chat:", error);
@@ -263,8 +261,6 @@ const ChatPage = () => {
     }, [user, fetchChatList]);
 
     const handleChatUpdated = useCallback((chatUpdate) => {
-        console.log('Chat updated via SignalR:', chatUpdate);
-
         setChatList(prevChats => prevChats.map(chat => {
             if (chat.chatId === chatUpdate.chatId) {
                 return {
@@ -307,7 +303,6 @@ const ChatPage = () => {
             }
         };
         updateAgentCounts();
-        console.log("From handle chat update");
         fetchChatList();
     }, [user, fetchChatList]);
 
@@ -321,7 +316,6 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (!loadingDashboard && !dashboardError) {
-            console.log("fromuseeffect - Line 323");
             fetchChatList(1, true);
             setCurrentPage(1);
         }
@@ -414,7 +408,6 @@ const ChatPage = () => {
                 ...prevSelectedChat,
                 TagId: tagId
             }));
-            console.log("from handle set tag");
             fetchChatList();
         } catch (err) {
             console.error("Error setting tag:", err);
@@ -440,7 +433,6 @@ const ChatPage = () => {
                 ...prevSelectedChat,
                 TagId: null
             })); 
-            console.log("from handle remove tag");
             fetchChatList();
         } catch (err) {
             console.error("Error removing tag:", err);
@@ -460,7 +452,6 @@ const ChatPage = () => {
                 c.chatId === selectedChat.chatId ? { ...c, assignedAgentId: agentId } : c
             ));
             setSelectedChat(prev => ({ ...prev, assignedAgentId: agentId }));
-            console.log("from handle assign agent");
             fetchChatList();
         } catch (err) {
             console.error("Error assigning chat:", err);
@@ -479,11 +470,12 @@ const ChatPage = () => {
             setChatList(prevChats => prevChats.map(c =>
                 c.chatId === selectedChat.chatId ? { ...c, ChatStatus: status } : c
             ));
+            const updatedHistory = await getChatMessageHistoryApi(selectedChat.chatId,user.orgId, user.token);
+            setCurrentChatHistory(updatedHistory);  
             setSelectedChat(prevSelectedChat => ({
                 ...prevSelectedChat,
                 ChatStatus: status
             }));
-            console.log("from handle change status");
             fetchChatList();
         } catch (err) {
             console.error("Error changing chat status:", err);
@@ -493,20 +485,21 @@ const ChatPage = () => {
         }
     };
 
-    const handleSendMessage = async (content, messageType = 'text', fileName, fileType) => {
+    const handleSendMessage = async (content, messageType = 'text', fileName, fileType, audioDuration, fileSize) => {
         if (!selectedChat?.chatId || !user?.token || (!content && messageType === 'text')) return;
 
         const messageData = {
             orgId: user.orgId,
             channelId: selectedChat.channelConfig,
             chatId: selectedChat.chatId,
-            externalSenderId: user.userId,
+            externalSenderId: selectedChat.customerExternalId,
             platform: selectedChat.platfrom,
             type: messageType,
             text: content,
             fileName: fileName,
             fileExt: fileType,
-            audioDuration: messageType === 'audio' ? 0 : 0
+            audioDuration: messageType === 'audio' ? audioDuration : 0,
+            fileSize: messageType === 'document' ? fileSize : 0
         };
 
         try {
@@ -536,7 +529,6 @@ const ChatPage = () => {
 
     const handleLoadMoreChats = () => {
         setCurrentPage(prevPage => prevPage + 1);
-        console.log("currentpage", currentPage);
     };
 
     const handleChannelFilterChange = (channelId) => {
@@ -570,7 +562,6 @@ const ChatPage = () => {
     };
 
     useEffect(() => {
-        console.log("from useeffect - line 573");
         if (currentPage > 1) {
             fetchChatList(currentPage, false);
         }
