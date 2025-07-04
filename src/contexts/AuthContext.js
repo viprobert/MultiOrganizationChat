@@ -35,7 +35,10 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await loginApi(username, password, twoFactorCode, recoveryCode);
-
+            if (response.code == 400){
+                setLoading(false);
+                setError(response.message);
+            }
             if (response.requiresTwoFactor) {
                 setRequiresTwoFactor(true);
                 setTwoFactorEnabledForUser(response.twoFactorEnabledForUser);
@@ -111,12 +114,12 @@ export const AuthProvider = ({ children }) => {
         setUserIdFor2FA(null);
     }, []);
 
-    const generateTwoFactorSetup = useCallback(async (token) => {
+    const generateTwoFactorSetup = useCallback(async () => {
         setLoading(true);
         setError(null);
         try {
-            if (!user?.token) throw new Error("Not authenticated.");
-            const data = await generateTwoFactorSetupApi(user.userId, user.token);
+            //if (!user?.token) throw new Error("Not authenticated.");
+            const data = await generateTwoFactorSetupApi(userIdFor2FA);
             setLoading(false);
             return { success: true, data };
         } catch (err) {

@@ -3,9 +3,9 @@ import {API_BASE_URL as API_URL} from '../config/api';
 const API_BASE_URL = API_URL;
 
 
-export const getChatsByTagApi = async (orgId, token) => {
+export const getChatsByTagApi = async (orgId, userId, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging/GetChatsByTag?orgId=${orgId}`, {
+    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatsByTag?orgId=${orgId}&agentId=${userId}`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -172,9 +172,9 @@ export const updateTagApi = async (tagData, token) => {
   }
 };
 
-export const deleteTagApi = async (id, token) => {
+export const deleteTagApi = async (id, orgId, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging?id=${id}`, {
+    const response = await fetch(`${API_BASE_URL}/Tagging?id=${id}&orgId=${orgId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,

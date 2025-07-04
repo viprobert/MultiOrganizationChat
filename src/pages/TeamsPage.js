@@ -69,18 +69,19 @@ const TeamsPage = () => {
             if (authLoading || !user?.token) { 
                 return;
             }
+            let orgs = [];
             try {
-                const [orgs] = await Promise.all([
-                    getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token)
-                ]);
-    
-                setAllOrganizations(orgs);
+                if (user?.isSuperAdmin){
+                    orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token); 
+                    setAllOrganizations(orgs);
+                    }
             } catch (err) {
                 console.error("Error fetching  organizations:", err);
             }
             finally{
                 setOrganizationsLoading(false);
             }
+            
         };
 
     useEffect(() => {

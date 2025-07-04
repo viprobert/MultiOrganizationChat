@@ -5,15 +5,6 @@ import { faUser, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate, useLocation } from 'react-router-dom'; 
 import TwoFactorSetup from '../components/TwoFactorSetup';
 
-const UserCircleIcon = () => (
-    <svg style={{ marginRight: '0.5rem', color: '#007bff' }} viewBox="0 0 448 512" fill="currentColor" width="1em" height="1em"><path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7c0-98.5-79.8-178.3-178.3-178.3H224z" /></svg>
-);
-
-const SpinnerIcon = () => (
-    <svg style={{ marginRight: '0.75rem' }} viewBox="0 0 512 512" fill="currentColor" width="1em" height="1em"><path d="M304 48a48 48 0 1 0 -96 0V136c0 13.3 10.7 24 24 24h48c13.3 0 24-10.7 24-24V48zm0 416a48 48 0 1 0 -96 0V376c0-13.3 10.7-24 24-24h48c13.3 0 24 10.7 24 24v88zM448 304a48 48 0 1 0 0-96H360c-13.3 0-24 10.7-24 24v48c0 13.3 10.7 24 24 24h88zM64 208a48 48 0 1 0 0 96H152c13.3 0 24-10.7 24-24v-48c0-13.3-10.7-24-24-24H64zm384-64a48 48 0 1 0 -69.5 73.5L341.6 270.4c-11.4 11.4-11.4 29.9 0 41.3s29.9 11.4 41.3 0L422.4 250.4c17.4-17.4 45.4-17.4 62.7 0c17.4 17.4 17.4 45.4 0 62.7l-41.5 41.5c-11.4 11.4-11.4 29.9 0 41.3s29.9 11.4 41.3 0l41.5-41.5c45.2-45.2 45.2-118.3 0-163.5s-118.3-45.2-163.5 0L242.7 122.7c-11.4-11.4-29.9-11.4-41.3 0s-11.4 29.9 0 41.3L270.4 206.4c11.4 11.4 29.9 11.4 41.3 0s11.4-29.9 0-41.3L242.7 122.7zm-256 0c-11.4-11.4-29.9-11.4-41.3 0S16.4 194.8 16.4 206.1l41.5 41.5c11.4 11.4 11.4 29.9 0 41.3s-29.9 11.4-41.3 0L16.4 297.9c-45.2-45.2-45.2-118.3 0-163.5s118.3-45.2 163.5 0L270.4 242.7c11.4 11.4 29.9 11.4 41.3 0s11.4-29.9 0-41.3L206.4 16.4c-11.4-11.4-29.9-11.4-41.3 0s-11.4 29.9 0 41.3l41.5 41.5c11.4 11.4 11.4 29.9 0 41.3s-29.9 11.4-41.3 0L122.7 242.7c-45.2 45.2-45.2 118.3 0 163.5s118.3 45.2 163.5 0L297.9 45.2c11.4 11.4 29.9 11.4 41.3 0s11.4-29.9 0-41.3L206.4 16.4z" /></svg>
-);
-
-
 const AuthPage = () => {
     const navigate = useNavigate();
      const location = useLocation();
@@ -38,6 +29,7 @@ const AuthPage = () => {
         twoFactorEnabledForUser,
         twoFactorSetupData,
         completeForcedTwoFactorSetup,
+        generateTwoFactorSetup,
         userIdFor2FA, 
         isAuthenticated,
         checkUserByEmail,
@@ -79,7 +71,6 @@ const AuthPage = () => {
         e.preventDefault();
         setTempMessage(null);
         const result = await login(username, password);
-
         if (result.status === '2FA_SETUP_REQUIRED' || result.status === '2FA_VERIFICATION_REQUIRED') {
             setTempMessage(result.message);
         } else if (result.status === 'LOGIN_FAILED') {
@@ -149,34 +140,6 @@ const AuthPage = () => {
     };
 
     const styles = {
-        // container: {
-        //     display: 'flex',
-        //     alignItems: 'center',
-        //     justifyContent: 'center',
-        //     minHeight: '100vh',
-        //     background: 'linear-gradient(to bottom right, #e0f2ff, #c3dafe)',
-        //     padding: '1rem',
-        //     fontFamily: 'Inter, sans-serif'
-        // },
-        // card: {
-        //     backgroundColor: '#ffffff',
-        //     borderRadius: '1rem',
-        //     boxShadow: '0 10px 15px rgba(0,0,0,0.1)',
-        //     padding: '2rem',
-        //     maxWidth: '400px',
-        //     width: '100%',
-        //     boxSizing: 'border-box',
-        // },
-        // title: {
-        //     fontSize: '1.875rem',
-        //     fontWeight: 'bold',
-        //     textAlign: 'center',
-        //     color: '#333',
-        //     marginBottom: '2rem',
-        //     display: 'flex',
-        //     alignItems: 'center',
-        //     justifyContent: 'center'
-        // },
         label: {
             display: 'block',
             fontSize: '0.875rem',
@@ -193,49 +156,6 @@ const AuthPage = () => {
             boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
             transition: 'border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out'
         },
-        // button: {
-        //     width: '100%',
-        //     display: 'flex',
-        //     justifyContent: 'center',
-        //     alignItems: 'center',
-        //     padding: '0.75rem 1rem',
-        //     border: 'none',
-        //     borderRadius: '0.5rem',
-        //     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        //     color: 'white',
-        //     backgroundColor: '#007bff',
-        //     fontSize: '1.125rem',
-        //     fontWeight: '500',
-        //     cursor: 'pointer',
-        //     transition: 'background-color 0.2s ease, transform 0.2s ease',
-        // },
-        // button1: {
-        //     width: '100%',
-        //     display: 'flex',
-        //     justifyContent: 'center',
-        //     alignItems: 'center',
-        //     padding: '0.75rem 1rem',
-        //     border: 'none',
-        //     borderRadius: '0.5rem',
-        //     boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-        //     color: 'white',
-        //     backgroundColor: '#007bff',
-        //     fontSize: '1.125rem',
-        //     fontWeight: '500',
-        //     cursor: 'pointer',
-        //     transition: 'background-color 0.2s ease, transform 0.2s ease',
-        //     marginTop: '2rem',
-        // },
-        // linkButton: {
-        //     background: 'none',
-        //     border: 'none',
-        //     padding: 0,
-        //     marginTop: '1rem',
-        //     color: '#007bff',
-        //     textDecoration: 'underline',
-        //     cursor: 'pointer',
-        //     fontSize: '0.9rem'
-        // },
         errorMessage: {
             backgroundColor: '#ffe0e0',
             border: '1px solid #ffb3b3',
@@ -244,13 +164,7 @@ const AuthPage = () => {
             marginTop: '1rem',
             borderRadius: '0.5rem',
             fontSize: '0.875rem'
-        },
-        // infoMessage: {
-        //     fontSize: '0.9rem',
-        //     color: '#666',
-        //     textAlign: 'center',
-        //     marginBottom: '1.5rem',
-        // },
+        }
     };
 
     let currentAuthStageUI;
@@ -407,6 +321,14 @@ const AuthPage = () => {
                     <button type="submit" className='auth-button' style={{ backgroundColor: loading ? '#a0c0e0' : '#007bff' }} disabled={loading}>
                         {loading ? <FontAwesomeIcon icon={faSpinner} style={{ fontSize: '2rem', marginRight: '0.75rem' }} spin/> : 'Verify and Login'}
                     </button>
+                    {/* <button
+                        type="button"
+                        onClick={() => { handleReGenerateQrCode(); }}
+                        className='auth-linkbutton'
+                        style={{  marginTop: '1.5rem' }}
+                    >
+                        Re-generate Qr code
+                    </button> */}
                 </form>
             );
         } else {

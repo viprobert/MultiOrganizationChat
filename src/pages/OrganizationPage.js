@@ -251,7 +251,7 @@ const OrganizationPage = () => {
             />
 
             <div style={{ 
-                    maxWidth: '1200px', 
+                    maxWidth: '1400px', 
                     margin: '5rem auto', 
                     backgroundColor: '#ffffff', 
                     borderRadius: '0.75rem', 
@@ -315,7 +315,7 @@ const OrganizationPage = () => {
                                     {organizations.map(org => (
                                         <tr key={org.id} style={{ backgroundColor: '#fff', borderRadius: '0.5rem', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', transition: 'transform 0.1s ease', '&:hover': { transform: 'translateY(-2px)' } }}>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee', borderTopLeftRadius: '0.5rem', borderBottomLeftRadius: '0.5rem' }}>{org.name}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{org.description}</td>
+                                            <td style={{ padding: '1rem', borderBottom: '1px solid #eee', maxWidth: '420px' }}>{org.description}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{org.maxAgentCount}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>{org.maxChannelCount}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #eee' }}>

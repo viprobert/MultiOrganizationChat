@@ -16,6 +16,7 @@ export const loginApi = async (username, password) => {
 
     if (!response.ok) {
       const errorData = await response.json();
+      console.log("error data",errorData);
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
     
@@ -52,7 +53,7 @@ export const changeAgentStatusApi = async (agentId, isOnline, token) => {
   }
 };
 
-export const generateTwoFactorSetupApi = async (userId, token) => {
+export const generateTwoFactorSetupApi = async (userId) => {
   try{
     const response = await fetch(`${API_BASE_URL}/Authentication/twofactor/generate-setup`, {
       method: 'POST',

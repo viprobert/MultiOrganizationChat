@@ -76,13 +76,20 @@ const UserRolesPage = () => {
             return;
         }
         try {
-            const [perms, orgs] = await Promise.all([
-                getPermissionToAssignApi(user.token),
-                getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token)
-            ]);
-
-            setAllPermissions(perms);
-            setAllOrganizations(orgs);
+            let perms = [];
+            let orgs = [];
+            if (user?.isSuperAdmin){
+                [orgs, perms] = await Promise.all([
+                    getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token),
+                    getPermissionToAssignApi(user.token)
+                ]);
+                setAllPermissions(perms);
+                setAllOrganizations(orgs);
+            }
+            else{
+                perms = await getPermissionToAssignApi(user.token)
+                setAllPermissions(perms);
+            }           
         } catch (err) {
             console.error("Error fetching permissions or organizations:", err);
         }

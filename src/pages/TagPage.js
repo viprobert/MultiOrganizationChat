@@ -119,7 +119,7 @@ const TagPage = () => {
             if (editingTag) {
                 await updateTagApi({
                     id: editingTag.id,
-                    organizationId: user.orgId, 
+                    orgId: user.orgId, 
                     name: tagForm.name,
                     description: tagForm.description
                 }, user.token);
@@ -155,7 +155,7 @@ const TagPage = () => {
         setShowDeleteConfirm(false); 
 
         try {
-            await deleteTagApi(tagToDelete.id, user.token);
+            await deleteTagApi(tagToDelete.id, user.orgId, user.token);
             alert(`Tag "${tagToDelete.name}" deleted successfully!`);
             fetchTags();
         } catch (err) {

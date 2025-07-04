@@ -17,11 +17,16 @@ const formatTimestamp = (timestamp) => {
     return new Intl.DateTimeFormat('en-US', options).format(date);
 };
 
+const truncateText = (text, maxLength) => {
+        if (!text) return '';
+        if (text.length <= maxLength) return text;
+        return text.substring(0, maxLength) + '...';
+    };
+
 const getLatestMessagePreview = (message) => {
-    console.log("message to list view", message);
     if (message.messageType === "text"){
      return(
-        message.contenet
+        truncateText(message.content, 60)
       )
     }
     else if (message.messageType === "image"){
@@ -139,9 +144,9 @@ const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons 
                                 borderRadius: '9999px',
                                 fontWeight: '600',
                                 backgroundColor: chat.chatStatus === 'Active' || chat.chatStatus === 'InProgress' ? '#d4edda' :
-                                                 chat.chatStatus === 'Pending' ? '#fff3cd' :
-                                                 chat.chatStatus === 'Assigned' ? '#e0f2ff' :
-                                                 chat.chatStatus === 'Closed' ? '#f8d7da' : '#eee',
+                                                 chat.chatStatus === 'pending' ? '#fff3cd' :
+                                                 chat.chatStatus === 'assigned' ? '#e0f2ff' :
+                                                 chat.chatStatus === 'closed' ? '#f8d7da' : '#eee',
                                 color: chat.chatStatus === 'Active' || chat.chatStatus === 'InProgress' ? '#155724' :
                                        chat.chatStatus === 'Pending' ? '#856404' :
                                        chat.chatStatus === 'Assigned' ? '#004085' :

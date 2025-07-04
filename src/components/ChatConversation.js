@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { sendMessageApi } from '../api/chats';
 import { faEllipsisV, faNoteSticky, faArrowRightArrowLeft, faTag, faCommentDots, faPaperPlane, faStar } from '@fortawesome/free-solid-svg-icons';
-import ChatMessageArea from './ChatMessageArea'; 
+import ChatMessageArea from './ChatMessageArea';
 import MessageInput from './MessageInput';
 
 const ChatConversation = ({
@@ -24,15 +24,31 @@ const ChatConversation = ({
     handleSendMessage,
     platformIcons,
     onAcceptChat,
-    onRejectChat 
+    onRejectChat
 }) => {
     const { user } = useAuth();
     const [isActionPanelVisible, setIsActionPanelVisible] = useState(false);
+    const [selectedAgentForTransfer, setSelectedAgentForTransfer] = useState('');
+    const [selectedTagForAction, setSelectedTagForAction] = useState('');
+    const [selectedStatusForChange, setSelectedStatusForChange] = useState('');
+
+    useEffect(() => {
+        if (selectedChat) {
+            setSelectedAgentForTransfer(selectedChat.assignedAgentId || '');
+            setSelectedTagForAction(selectedChat.TagId || ''); 
+            setSelectedStatusForChange(selectedChat.chatStatus || '');
+        } else {
+            setSelectedAgentForTransfer('');
+            setSelectedTagForAction('');
+            setSelectedStatusForChange('');
+        }
+    }, [selectedChat]);
+
     const currentTagName = selectedChat?.TagId
         ? allAvailableTags.find(tag => tag.id === selectedChat.TagId)?.name
         : null;
 
-    const isAcceptableByCurrentUser = currentChatHistory && currentChatHistory.acceptAssigned === false
+    const isAcceptableByCurrentUser = currentChatHistory && currentChatHistory.acceptAssigned === false;
 
     const handleRateAgent = async () => {
         if (!selectedChat || !user) {
@@ -40,10 +56,10 @@ const ChatConversation = ({
             return;
         }
 
-        const orgId = selectedChat.orgId || user.orgId; 
+        const orgId = selectedChat.orgId || user.orgId;
         const chatId = selectedChat.chatId;
-        const agentId = user.userId; 
-        const customerName = selectedChat.displayname || 'Unknown Customer'; 
+        const agentId = user.userId;
+        const customerName = selectedChat.displayname || 'Unknown Customer';
         const customerId = selectedChat.customerExternalId || selectedChat.externalChatId || 'unknown';
         const platform = selectedChat.platfrom;
 
@@ -61,23 +77,28 @@ const ChatConversation = ({
                          `customerId=${encodeURIComponent(customerId)}&` +
                          `platform=${encodeURIComponent(platform)}`;
 
-        const shortUrl = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(ratingUrl)}`).then(res => res.text());
-        const message = `⭐Please Rate Me Here:\n${shortUrl}`;
+        // Use TinyURL API to short the url
+        try {
+            const shortUrl = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(ratingUrl)}`).then(res => res.text());
+            const message = `⭐Please Rate Me Here:\n${shortUrl}`;
 
-        //const message = `⭐Please Rate Me Here:\n${ratingUrl}`;
+            const messageData = {
+                orgId: user.orgId,
+                channelId: selectedChat.channelConfig,
+                chatId: selectedChat.chatId,
+                externalSenderId: selectedChat.customerExternalId,
+                platform: selectedChat.platfrom,
+                type: "text",
+                text: message,
+                audioDuration: 0,
+                fileSize: 0
+            };
 
-        const messageData = {
-            orgId: user.orgId,
-            channelId: selectedChat.channelConfig,
-            chatId: selectedChat.chatId,
-            externalSenderId: selectedChat.customerExternalId,
-            platform: selectedChat.platfrom,
-            type: "text",
-            text: message,
-            audioDuration: 0
-        };
-
-        await sendMessageApi(messageData, user.token);
+            await sendMessageApi(messageData, user.token);
+        } catch (error) {
+            console.error("Error shortening URL or sending message:", error);
+            alert("Failed to send rating link. Please try again.");
+        }
     };
 
     return (
@@ -112,8 +133,8 @@ const ChatConversation = ({
                                 </label>
                                 <select
                                     id="assign-agent"
-                                    value={selectedChat.assignedAgentId || ''}
-                                    onChange={(e) => handleAssignAgent(e.target.value)}
+                                    value={selectedAgentForTransfer} 
+                                    onChange={(e) => setSelectedAgentForTransfer(e.target.value)}
                                     disabled={isActionPanelLoading}
                                 >
                                     <option value="">Select Agent or Team</option>
@@ -127,7 +148,11 @@ const ChatConversation = ({
                                         </optgroup>
                                     ))}
                                 </select>
-                                <button onClick={() => handleAssignAgent(selectedChat.assignedAgentId)} disabled={isActionPanelLoading || !selectedChat.assignedAgentId} className="indigo">
+                                <button
+                                    onClick={() => handleAssignAgent(selectedAgentForTransfer)}
+                                    disabled={isActionPanelLoading || !selectedAgentForTransfer || selectedAgentForTransfer === selectedChat.assignedAgentId}
+                                    className="indigo"
+                                >
                                     {isActionPanelLoading ? 'Transferring...' : 'Transfer'}
                                 </button>
                             </div>
@@ -139,8 +164,8 @@ const ChatConversation = ({
                                 </label>
                                 <select
                                     id="set-tag"
-                                    value={currentChatTags?.[0] || ''}
-                                    onChange={(e) => handleSetTag(e.target.value)}
+                                    value={selectedTagForAction}
+                                    onChange={(e) => setSelectedTagForAction(e.target.value)} 
                                     disabled={isActionPanelLoading}
                                 >
                                     <option value="">Select a Tag</option>
@@ -150,11 +175,20 @@ const ChatConversation = ({
                                         </option>
                                     ))}
                                 </select>
-                                <button onClick={() => handleSetTag(currentChatTags?.[0] || null)} disabled={isActionPanelLoading || !currentChatTags?.[0]} className="green">
+                                <button
+                                    onClick={() => handleSetTag(selectedTagForAction)}
+                                    disabled={isActionPanelLoading || !selectedTagForAction || selectedTagForAction === selectedChat.TagId}
+                                    className="green"
+                                >
                                     {isActionPanelLoading ? 'Applying...' : 'Apply Tag'}
                                 </button>
-                                {currentChatTags?.length > 0 && (
-                                    <button onClick={handleRemoveTag} disabled={isActionPanelLoading} className="red" style={{ marginTop: '0.5rem' }}>
+                                {selectedChat?.TagId && (
+                                    <button
+                                        onClick={handleRemoveTag}
+                                        disabled={isActionPanelLoading}
+                                        className="red"
+                                        style={{ marginTop: '0.5rem' }}
+                                    >
                                         {isActionPanelLoading ? 'Removing...' : 'Remove Current Tag'}
                                     </button>
                                 )}
@@ -167,8 +201,8 @@ const ChatConversation = ({
                                 </label>
                                 <select
                                     id="change-status"
-                                    value={selectedChat?.chatStatus || ''}
-                                    onChange={(e) => handleChangeChatStatus(e.target.value)}
+                                    value={selectedStatusForChange}
+                                    onChange={(e) => setSelectedStatusForChange(e.target.value)} 
                                     disabled={isActionPanelLoading}
                                 >
                                     <option value="">Select Status</option>
@@ -178,7 +212,11 @@ const ChatConversation = ({
                                         </option>
                                     ))}
                                 </select>
-                                <button onClick={() => handleChangeChatStatus(selectedChat?.chatStatus)} disabled={isActionPanelLoading || !selectedChat?.chatStatus} className="yellow">
+                                <button
+                                    onClick={() => handleChangeChatStatus(selectedStatusForChange)}
+                                    disabled={isActionPanelLoading || !selectedStatusForChange || selectedStatusForChange === selectedChat.chatStatus}
+                                    className="yellow"
+                                >
                                     {isActionPanelLoading ? 'Updating...' : 'Set Status'}
                                 </button>
                             </div>
@@ -200,7 +238,7 @@ const ChatConversation = ({
                             <div>
                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>{selectedChat.displayname}</h2>
                                 <p style={{ fontSize: '0.875rem', color: '#555', margin: 0 }}>
-                                    {platformIcons[selectedChat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>} 
+                                    {platformIcons[selectedChat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>}
                                       Status: {selectedChat.chatStatus}
                                     {currentTagName && (
                                         <span style={{ marginLeft: '0.5rem', backgroundColor: '#e6e0ff', color: '#6610f2', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600' }}>
@@ -211,7 +249,7 @@ const ChatConversation = ({
                                 </p>
                             </div>
                         </div>
-                        
+
                         <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
                             <button
                                 onClick={handleRateAgent}
@@ -249,7 +287,7 @@ const ChatConversation = ({
                         onAcceptChat={onAcceptChat}
                         onRejectChat={onRejectChat}
                         isAcceptable = {isAcceptableByCurrentUser}
-                        style={{ flex: 1, minHeight: 0, overflowY: 'auto' }} 
+                        style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}
                     />
 
                     {/* Message Input Area */}

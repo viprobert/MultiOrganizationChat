@@ -69,8 +69,10 @@ const ChatSideBar = ({
             <div style={{ padding: '1.5rem', background: 'linear-gradient(to right, #007bff, #6610f2)', color: 'white', borderRadius: '0 0 1rem 0', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <div>
+                        <Link to="/profile" style={{ textDecoration: 'none', color: 'white' }}>
                         <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>{user?.userName || 'Agent'}</h2>
                         <p style={{ fontSize: '0.875rem', opacity: 0.9, margin: 0 }}>{user?.orgName || 'Organization'}</p>
+                        </Link>
                     </div>
                 </div>
                 {/* Agent Status */}

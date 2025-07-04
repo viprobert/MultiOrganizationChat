@@ -7,6 +7,7 @@ import UserRolesPage from './pages/UserRolesPage';
 import TagPage from './pages/TagPage';
 import TeamsPage from './pages/TeamsPage';
 import UserPage from './pages/UserPage';
+import UserProfile from './components/UserProfile.js';
 import ChannelPage from './pages/ChannelPage';
 import OrganizationPage from './pages/OrganizationPage';
 import PermissionPage from './pages/PermissionPage';
@@ -113,6 +114,8 @@ const AppContent = () => {
       <Route path="/login" element={<AuthPage />} />
 
       <Route path="/customer-rating" element={<CustomerRatingPage />} />
+
+      <Route path="/profile" element={<UserProfile />} />
 
       <Route
         path="/"

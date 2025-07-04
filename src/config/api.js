@@ -1,2 +1,1 @@
-export const API_BASE_URL = 'https://5bd0-136-228-146-226.ngrok-free.app/api';
-//export const API_BASE_URL = 'http://localhost:7001/api';
+export const API_BASE_URL = 'https://fc5c-136-228-146-226.ngrok-free.app/api';

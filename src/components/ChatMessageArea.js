@@ -90,7 +90,6 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                     const isAgentMessage = message.senderType === 'Agent' && message.senderUserId === currentAgentId;
                     const isOtherAgentMessage = message.senderType === 'Agent' && message.senderUserId !== currentAgentId;
                     const isVideoMessage = message.messageType === 'video';
-                    console.log("Isvideo",isVideoMessage);
                     let bubbleStyle = {
                         maxWidth: '70%',
                         padding: '0.75rem',
@@ -203,11 +202,11 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                         )}
                             <div style={bubbleStyle}>
                                 {message.messageType === 'image' && message.content ? (
-                                    <img src={message.content} alt="Sent" style={{ maxWidth: '100%', borderRadius: '0.5rem' }} />
+                                    <img src={message.content} alt="Sent" style={{ maxWidth: '100%', maxHeight: '400px', width: 'auto', height: 'auto', borderRadius: '0.5rem', display:'block' }} />
                                 ) : message.messageType === 'audio' && message.content ? (
                                     <audio controls src={message.content}></audio>
                                 ) : message.messageType === 'video' &&  message.content ? (
-                                    <video controls src={message.content} style={{ maxWidth: '100%', maxHeight: '400px', width: 'auto', height:'auto',borderRadius: '0.5rem', display:'block' }}>
+                                    <video controls src={message.content} style={{ maxWidth: '100%', maxHeight: '400px', width: 'auto', height: 'auto',borderRadius: '0.5rem', display:'block' }}>
                                         Your browser does not support the video tag.
                                     </video>
                                 ) : message.messageType === 'document' && message.content ? (

@@ -88,12 +88,12 @@ const UserPage = () => {
             let teams = [];
             let roles = [];
             let orgs = [];
-
-            orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
-            setAllOrganizations(orgs);
-            setOrganizationsLoading(false);
-
+            
             if (user?.isSuperAdmin) {
+                orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
+                setAllOrganizations(orgs);
+                setOrganizationsLoading(false);
+
                 [teams, roles] = await Promise.all([
                     getAllTeamsApi(null, user.token), 
                     getAllUserRolesApi(null, user.token) 

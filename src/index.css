@@ -40,6 +40,9 @@ h3 {
 
 .container-full-height {
     display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-grow: 1;
     min-height: 100vh;
     height: 100%;
     background-color: #f0f2f5; 
@@ -492,24 +495,24 @@ height: 100%;
     align-items: center;
     justify-content: center;
 }
-.auth-label{
-    display: block;
-    font-size: bold;
-    text-align: center;
-    color: #333;
-    margin-bottom: 2rem;
-    display: flex;
+.test-label{
+    display: block !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: #555 !important;
+    margin-bottom: 0.25rem !important;
+    /* display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; */
 }
-.auth-input{
-    display: block;
-    width: calc(100% - 2rem);
-    padding: 0.75 rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 0.5rem;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    transition: border-color 0.15 ease-in-out, box-shadow 0.15s ease-in-out;
+.test-input{
+    display: block !important;
+    width: calc(100% - 2rem) !important;
+    padding: 0.75 rem 1rem !important;
+    border: 1px solid #ccc !important;
+    border-radius: 0.5rem !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+    transition: border-color 0.15 ease-in-out, box-shadow 0.15s ease-in-out !important;
 }
 .auth-submitbutton{
     width: 100%;
@@ -569,6 +572,100 @@ height: 100%;
     text-align: center;
     margin-bottom: 1.5rem;
 }
+
+/* user profile page */
+.user-profile-container {
+    min-width: 600px;
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 16px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: #fff;
+    font-family: Arial, sans-serif;
+}
+
+.user-profile-title {
+    text-align: center;
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.user-profile-section-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.user-profile-row {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.user-profile-label {
+    width: 120px;
+    font-weight: 500;
+    color: #333;
+}
+
+.user-profile-input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.user-profile-button-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.user-profile-button {
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    width: 100%;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.user-profile-button.save {
+    background-color: #28a745;
+}
+
+.user-profile-button.cancel {
+    background-color: #6c757d;
+}
+
+.user-profile-message-success {
+    color: green;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.user-profile-message-error {
+    color: red;
+    margin-top: 10px;
+    text-align: center;
+}
+.error-text {
+    color: red;
+    text-align: center;
+    margin-top: 20px;
+}
+.success-text{
+    color: green;
+    text-align: center;
+    margin-top: 20px;
+}
+
 
 @media (min-width: 640px) { 
     .dashboard-date-range-selector input {
