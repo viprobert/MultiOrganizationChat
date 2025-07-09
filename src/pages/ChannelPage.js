@@ -138,7 +138,7 @@ const ChannelPage = () => {
             if (editingChannel) {
                 await updateChannelApi({
                     id: editingChannel.id,
-                    organizationId: user.orgId, 
+                    orgId: user.orgId, 
                     name: channelForm.name,
                     platform: channelForm.platform,
                     accessToken: channelForm.accessToken,
@@ -378,7 +378,7 @@ const ChannelPage = () => {
                             value={channelForm.platform}
                             onChange={handleFormChange}
                             style={{ width: '95%', padding: '0.75rem', border: '1px solid #ccc', borderRadius: '0.5rem' }}
-                            placeholder="Enter Platform"
+                            placeholder="Enter Platform - LINE/TELEGRAM/MESSENGER/WHATSAPP"
                             disabled={isSaving}
                         ></input>
                     </div>
@@ -391,7 +391,7 @@ const ChannelPage = () => {
                             value={channelForm.accessToken}
                             onChange={handleFormChange}
                             style={{ width: '95%', padding: '0.75rem', border: '1px solid #ccc', borderRadius: '0.5rem' }}
-                            placeholder="Enter Access Token"
+                            placeholder="Enter Access Token/Secret Token"
                             disabled={isSaving}
                         ></input>
                     </div>

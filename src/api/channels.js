@@ -77,7 +77,7 @@ export const getChannelByIdApi = async (id, token) => {
 
 export const updateChannelApi = async (channelData, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/UpdateChannel`, {
+    const response = await fetch(`${API_BASE_URL}/Setting/UpdateChannel`, {
       method: 'PUT',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -101,7 +101,7 @@ export const updateChannelApi = async (channelData, token) => {
 
 export const deleteChannelApi = async (id, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/DeleteChannel?id=${id}`, {
+    const response = await fetch(`${API_BASE_URL}/Setting/DeleteChannel?id=${id}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`,
