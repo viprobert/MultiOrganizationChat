@@ -10,7 +10,7 @@ export const getChatReportAPI = async (reportRequest, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(reportRequest),
     });
@@ -35,7 +35,7 @@ export const getAgentReportAPI = async (reportRequest, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(reportRequest),
     });
@@ -60,7 +60,7 @@ export const getTagReportAPI = async (reportRequest, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(reportRequest),
     });
@@ -85,7 +85,7 @@ export const getStatusReportAPI = async (reportRequest, token) => {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(reportRequest),
       });

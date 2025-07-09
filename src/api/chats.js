@@ -9,7 +9,7 @@ export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) =>
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -33,7 +33,7 @@ export const getChatMessageHistoryApi = async (chatId, orgId, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -57,7 +57,7 @@ export const seenMessageApi = async (orgId ,chatId, agentId, msgId, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId, msgId }),
     });
@@ -81,7 +81,7 @@ export const AssignMessageApi = async (orgId ,chatId, agentId, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId }),
     });
@@ -105,7 +105,7 @@ export const AcceptMessageApi = async (orgId ,chatId, agentId, isAccept, token) 
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId, isAccept }),
     });
@@ -129,7 +129,7 @@ export const sendMessageApi = async (messageData, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(messageData),
     });
@@ -153,7 +153,7 @@ export const assignChatToAgentApi = async (orgId, chatId, agentId, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId }),
     });
@@ -177,7 +177,7 @@ export const changeChatStatusApi = async (orgId, chatId, status, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, status }),
     });
@@ -213,7 +213,7 @@ export const getFilteredChatsApi = async (params, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -237,7 +237,7 @@ export const customerRatingApi = async (rateData, token) => {
       headers: {
         //'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(rateData),
     });

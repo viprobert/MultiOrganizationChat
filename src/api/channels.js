@@ -9,7 +9,7 @@ export const getAllChannelsApi = async (orgId, token) => {
       headers: {
         'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -33,7 +33,7 @@ export const createChannelApi = async (channelData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(channelData),
     });
@@ -58,7 +58,7 @@ export const getChannelByIdApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -82,7 +82,7 @@ export const updateChannelApi = async (channelData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(channelData),
     });
@@ -106,7 +106,7 @@ export const deleteChannelApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 

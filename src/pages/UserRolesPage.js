@@ -25,11 +25,12 @@ const UserRolesPage = () => {
     const [allPermissions, setAllPermissions] = useState([]);
     const [permissionsLoading, setPermissionsLoading] = useState(true);
     const [permissionsError, setPermissionsError] = useState(null);
+    const [selectAll, setSelectAll] = useState(false); 
 
     const [allOrganizations, setAllOrganizations] = useState([]);
     const [organizationsLoading, setOrganizationsLoading] = useState(true);
     const [organizationsError, setOrganizationsError] = useState(null);
-
+    
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [agentOnlineStatus, setAgentOnlineStatus] = useState(user?.isOnline ?? false);
     const [actionPanelError, setActionPanelError] = useState(null);
@@ -166,6 +167,15 @@ const UserRolesPage = () => {
                 selectedPermissionIds: newPermissionIds
             };
         });
+    };
+
+    const handleSelectAllChange = (e) => {
+        const isChecked = e.target.checked;
+        setSelectAll(isChecked);
+        setRoleForm(prev => ({
+            ...prev,
+            selectedPermissionIds: isChecked ? allPermissions.map(p => p.id) : []
+        }));
     };
 
     const handleSaveRole = async (e) => {
@@ -452,6 +462,22 @@ const UserRolesPage = () => {
                         ) : permissionsError ? (
                             <div style={{ color: '#cc0000', fontSize: '0.875rem' }}>{permissionsError}</div>
                         ) : (
+                            <>
+                            {/* Select All Checkbox */}
+                                {allPermissions.length > 0 && (
+                                    <div style={{ marginBottom: '1rem', paddingBottom: '0.5rem', borderBottom: '1px dashed #ddd' }}>
+                                        <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', fontWeight: 'bold', color: '#333' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={selectAll}
+                                                onChange={handleSelectAllChange}
+                                                disabled={isSaving}
+                                                style={{ transform: 'scale(1.2)' }}
+                                            />
+                                            Select All
+                                        </label>
+                                    </div>
+                                )}
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.75rem' }}>
                                 {allPermissions.map(permission => (
                                     <label key={permission.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
@@ -467,6 +493,7 @@ const UserRolesPage = () => {
                                     </label>
                                 ))}
                             </div>
+                            </>
                         )}
                     </div>
 

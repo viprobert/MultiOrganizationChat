@@ -9,7 +9,8 @@ export const loginApi = async (username, password) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ username, password}),
     });
@@ -35,7 +36,8 @@ export const changeAgentStatusApi = async (agentId, isOnline, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ agentId, isOnline }),
     });
@@ -60,7 +62,8 @@ export const generateTwoFactorSetupApi = async (userId) => {
       headers: {
         'Content-Type': 'application/json',
         //'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ userId }),
     });
@@ -82,7 +85,8 @@ export const verifyTwoFactorSetupApi = async (userId, code, token ) => {
       headers: {
         'Content-Type': 'application/json',
         //'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ userId, code }),
     });
@@ -105,7 +109,8 @@ export const completeTwoFactorSetupApi = async (userId, code) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ userId, code }),
     });
@@ -130,7 +135,8 @@ export const disableTwoFactorApi = async (userId, code, token) => {
       headers: {
         'Content-Type': 'application/json',
         //'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ userId, code }),
     });
@@ -153,7 +159,8 @@ export const checkUserApi = async (email) => {
       headers: {
         'Content-Type': 'application/json',
         //'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       }
     });
 
@@ -176,7 +183,8 @@ export const forgetPasswordApi = async (email, otp, password) => {
       headers: {
         'Content-Type': 'application/json',
         //'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        // 'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ email, otp, password }),
     });

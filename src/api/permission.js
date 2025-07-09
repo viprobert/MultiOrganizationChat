@@ -9,7 +9,7 @@ export const getAllPermissionsApi = async (token) => {
       headers: {
         'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -33,7 +33,7 @@ export const getPermissionToAssignApi = async (token) => {
       headers: {
          'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       }
     });
     if (!response.ok) {
@@ -57,7 +57,7 @@ export const createPermissionApi = async (permData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(permData),
     });
@@ -82,7 +82,7 @@ export const getPermissionByIdApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -106,7 +106,7 @@ export const updatePermissionApi = async (permData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(permData),
     });
@@ -130,7 +130,7 @@ export const deletePermissionApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 

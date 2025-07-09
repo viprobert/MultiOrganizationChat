@@ -19,7 +19,7 @@ export const getAllOrganizationsApi = async (orgId,token) => {
       headers: {
         'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -43,7 +43,7 @@ export const createOrganizationApi = async (orgData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(orgData),
     });
@@ -68,7 +68,7 @@ export const getOrganizationByIdApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -92,7 +92,7 @@ export const updateOrganizationApi = async (orgData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(orgData),
     });
@@ -115,7 +115,7 @@ export const deleteOrganizationApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 

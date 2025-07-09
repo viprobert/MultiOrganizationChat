@@ -10,7 +10,7 @@ export const getChatsByTagApi = async (orgId, userId, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -34,7 +34,7 @@ export const getAllTagsApi = async (orgId, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -58,7 +58,7 @@ export const setUserTaggingApi = async (orgId, chatId, tagId, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, tagId }),
     });
@@ -82,7 +82,7 @@ export const removeTagFromUserApi = async (orgId, chatId, tagId, token) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, tagId }),
     });
@@ -106,7 +106,7 @@ export const createTagApi = async (tagData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(tagData),
     });
@@ -131,7 +131,7 @@ export const getTagByIdApi = async (id, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
@@ -155,7 +155,7 @@ export const updateTagApi = async (tagData, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(tagData),
     });
@@ -179,7 +179,7 @@ export const deleteTagApi = async (id, orgId, token) => {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': '69420',
+        'ngrok-skip-browser-warning': 'true',
       },
     });
 
