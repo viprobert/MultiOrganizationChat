@@ -115,7 +115,10 @@ const AppContent = () => {
 
       <Route path="/customer-rating" element={<CustomerRatingPage />} />
 
-      <Route path="/profile" element={<UserProfile />} />
+      <Route path="/profile" element={
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>} />
 
       <Route
         path="/"
