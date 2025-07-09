@@ -334,7 +334,8 @@ const ChatPage = () => {
                     note: chatUpdate.note ?? prevHistory.note,
                     tagId: chatUpdate.tagId ?? prevHistory.tagId,
                     ChatStatus: chatUpdate.status ?? prevHistory.ChatStatus, // Assuming status comes as ChatStatus
-                    assignedAgentId: chatUpdate.assignedAgentId ?? prevHistory.assignedAgentId
+                    assignedAgentId: chatUpdate.assignedAgentId ?? prevHistory.assignedAgentId,
+                    acceptAssigned: chatUpdate.acceptAssigned
                 };
             }
             return prevHistory;
@@ -344,7 +345,16 @@ const ChatPage = () => {
             if (prevSelectedChat && prevSelectedChat.chatId === chatUpdate.chatId) {
                 return {
                     ...prevSelectedChat,
-                    ...chatUpdate
+                    ...chatUpdate,
+                    acceptAssigned: chatUpdate.acceptAssigned !== undefined
+                            ? chatUpdate.acceptAssigned
+                            : prevSelectedChat.acceptAssigned,
+                    assignedAgentId: chatUpdate.assignedAgentId !== undefined
+                                    ? chatUpdate.assignedAgentId
+                                    : prevSelectedChat.assignedAgentId,
+                    chatStatus: chatUpdate.chatStatus !== undefined
+                                ? chatUpdate.chatStatus
+                                : prevSelectedChat.chatStatus
                 };
             }
             return prevSelectedChat;
@@ -579,6 +589,7 @@ const ChatPage = () => {
                     senderType: 'Agent',
                     senderUserId: user.userId,
                     externalSenderId: user.userId,
+                    acceptAssigned: selectedChat.acceptAssigned,
                     content: content,
                     messageType: messageType,
                     timeStamp: new Date().toISOString(),
@@ -592,6 +603,7 @@ const ChatPage = () => {
             });
 
             await sendMessageApi(messageData, user.token);
+            fetchAgentCounts();
         } catch (err) {
             console.error("Error sending message:", err);
             setActionPanelError("Failed to send message: " + (err.message || "Unknown error."));

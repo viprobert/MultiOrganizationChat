@@ -47,9 +47,8 @@ const ChatConversation = ({
     const currentTagName = selectedChat?.TagId
         ? allAvailableTags.find(tag => tag.id === selectedChat.TagId)?.name
         : null;
-
-    const isAcceptableByCurrentUser = currentChatHistory && currentChatHistory.acceptAssigned === false;
-
+        
+    const isAcceptableByCurrentUser = selectedChat && selectedChat.acceptAssigned === false;
     const handleRateAgent = async () => {
         if (!selectedChat || !user) {
             alert('Please select a chat and ensure user is logged in to rate.');
