@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faSpinner } from '@fortawesome/free-solid-svg-icons';
-//import { faStar as fasStar } from '@fortawesome/free-solid-svg-icons';
 import { customerRatingApi } from '../api/chats';
 
 

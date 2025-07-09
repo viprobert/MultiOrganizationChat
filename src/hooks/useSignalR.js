@@ -57,7 +57,6 @@ export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
       setError("Connection closed. Attempting to reconnect...");
     });
 
-
     const startConnection = async () => {
       try {
         await newConnection.start();

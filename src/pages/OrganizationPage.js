@@ -58,7 +58,6 @@ const OrganizationPage = () => {
         }
     };
 
-
     const fetchOrganizations = async () => {
         if (authLoading || !user?.token) return;
 
@@ -211,7 +210,6 @@ const OrganizationPage = () => {
         setShowDeleteConfirm(false);
         setOrganizationToDelete(null);
     };
-
 
     if (authLoading) {
         return (

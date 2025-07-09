@@ -227,50 +227,50 @@ const ChatConversation = ({
                         </div>
                     )}
                     {/* Chat Header */}
-                    <header className="header-panel" style={{ backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', borderBottom: '1px solid #eee', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                            <img
-                                src={selectedChat.pictureUrl || `https://placehold.co/48x48/cccccc/333333?text=${selectedChat.displayname?.charAt(0) || '?'}`}
-                                alt={selectedChat.displayname || 'User'}
-                                style={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', border: '2px solid #007bff' }}
-                            />
-                            <div>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>{selectedChat.displayname}</h2>
-                                <p style={{ fontSize: '0.875rem', color: '#555', margin: 0 }}>
-                                    {platformIcons[selectedChat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>}
-                                      Status: {selectedChat.chatStatus}
-                                    {currentTagName && (
-                                        <span style={{ marginLeft: '0.5rem', backgroundColor: '#e6e0ff', color: '#6610f2', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600' }}>
-                                            <FontAwesomeIcon icon={faTag} style={{ marginRight: '0.25rem' }} />
-                                            {currentTagName}
-                                        </span>
-                                    )}
-                                </p>
+                        <header className="header-panel" style={{ backgroundColor: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1rem', borderBottom: '1px solid #eee', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <img
+                                    src={selectedChat.pictureUrl || `https://placehold.co/48x48/cccccc/333333?text=${selectedChat.displayname?.charAt(0) || '?'}`}
+                                    alt={selectedChat.displayname || 'User'}
+                                    style={{ width: '3rem', height: '3rem', borderRadius: '50%', objectFit: 'cover', border: '2px solid #007bff' }}
+                                />
+                                <div>
+                                    <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>{selectedChat.displayname}</h2>
+                                    <p style={{ fontSize: '0.875rem', color: '#555', margin: 0 }}>
+                                        {platformIcons[selectedChat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>}
+                                        Status: {selectedChat.chatStatus}
+                                        {currentTagName && (
+                                            <span style={{ marginLeft: '0.5rem', backgroundColor: '#e6e0ff', color: '#6610f2', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                                <FontAwesomeIcon icon={faTag} style={{ marginRight: '0.25rem' }} />
+                                                {currentTagName}
+                                            </span>
+                                        )}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
-                            <button
-                                onClick={handleRateAgent}
-                                style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#007bff' }}
-                                onMouseOver={e => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-                                onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                                title="Rate Agent"
-                            >
-                                <FontAwesomeIcon icon={faStar} />
-                            </button>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem'}}>
+                                <button
+                                    onClick={handleRateAgent}
+                                    style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#007bff' }}
+                                    onMouseOver={e => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    title="Rate Agent"
+                                >
+                                    <FontAwesomeIcon icon={faStar} />
+                                </button>
 
-                            <button
-                                onClick={() => setIsActionPanelVisible(!isActionPanelVisible)}
-                                style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#555' }}
-                                onMouseOver={e => e.currentTarget.style.backgroundColor = '#f0f0f0'}
-                                onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                                title={isActionPanelVisible ? "Hide Actions" : "Show Actions"}
-                            >
-                            <FontAwesomeIcon icon={faEllipsisV} />
-                            </button>
-                        </div>
-                    </header>
+                                <button
+                                    onClick={() => setIsActionPanelVisible(!isActionPanelVisible)}
+                                    style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#555' }}
+                                    onMouseOver={e => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                                    onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                                    title={isActionPanelVisible ? "Hide Actions" : "Show Actions"}
+                                >
+                                <FontAwesomeIcon icon={faEllipsisV} />
+                                </button>
+                            </div>
+                        </header>
 
                     {/* Chat Message Area */}
                     <ChatMessageArea

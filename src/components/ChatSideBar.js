@@ -242,7 +242,6 @@ const ChatSideBar = ({
                     )}
                 </div>
 
-
                 {/* Channel/Group List */}
                 <div style={{ marginBottom: '1.5rem', backgroundColor: '#f9f9f9', padding: '1rem', borderRadius: '1rem', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
                     <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

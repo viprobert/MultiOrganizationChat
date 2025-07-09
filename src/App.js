@@ -115,15 +115,15 @@ const AppContent = () => {
 
       <Route path="/customer-rating" element={<CustomerRatingPage />} />
 
-      <Route path="/profile" element={
+      <Route path="/profile" 
+        element={
           <ProtectedRoute>
             <UserProfile />
-          </ProtectedRoute>} />
-
-      <Route
-        path="/"
-        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />}
+      </ProtectedRoute>
+        } 
       />
+
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <AuthPage />} />
 
       <Route
         path="/dashboard"

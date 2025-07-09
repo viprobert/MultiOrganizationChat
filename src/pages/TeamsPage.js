@@ -66,23 +66,23 @@ const TeamsPage = () => {
     };
 
     const fetchDropdownData = async () => {
-            if (authLoading || !user?.token) { 
-                return;
-            }
-            let orgs = [];
-            try {
-                if (user?.isSuperAdmin){
-                    orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token); 
-                    setAllOrganizations(orgs);
-                    }
-            } catch (err) {
-                console.error("Error fetching  organizations:", err);
-            }
-            finally{
-                setOrganizationsLoading(false);
-            }
-            
-        };
+        if (authLoading || !user?.token) { 
+            return;
+        }
+        let orgs = [];
+        try {
+            if (user?.isSuperAdmin){
+                orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token); 
+                setAllOrganizations(orgs);
+                }
+        } catch (err) {
+            console.error("Error fetching  organizations:", err);
+        }
+        finally{
+            setOrganizationsLoading(false);
+        }
+        
+    };
 
     useEffect(() => {
         fetchTeams();
@@ -207,7 +207,6 @@ const TeamsPage = () => {
         setShowDeleteConfirm(false);
         setTeamToDelete(null);
     };
-
 
     if (authLoading) {
         return (

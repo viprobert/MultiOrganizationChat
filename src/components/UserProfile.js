@@ -115,69 +115,6 @@ const UserProfile = () => {
         }
     };
 
-    // const styles = {
-    //     container: {
-    //         minWidth: '600px',
-    //         maxWidth: '600px',
-    //         margin: '100px auto',
-    //         padding: '30px',
-    //         border: '1px solid #ddd',
-    //         borderRadius: '16px',
-    //         boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    //         backgroundColor: '#fff',
-    //         fontFamily: 'Arial, sans-serif'
-    //     },
-    //     sectionTitle: {
-    //         fontSize: '20px',
-    //         fontWeight: 'bold',
-    //         marginBottom: '15px'
-    //     },
-    //     row: {
-    //         marginBottom: '15px',
-    //         display: 'flex',
-    //         alignItems: 'center'
-    //     },
-    //     label: {
-    //         width: '120px',
-    //         fontWeight: '500',
-    //         color: '#333'
-    //     },
-    //     input: {
-    //         flex: 1,
-    //         padding: '8px 10px',
-    //         borderRadius: '8px',
-    //         border: '1px solid #ccc',
-    //         fontSize: '14px'
-    //     },
-    //     buttonContainer: {
-    //         marginTop: '20px',
-    //         display: 'flex',
-    //         gap: '10px'
-    //     },
-    //     button: {
-    //         padding: '10px 15px',
-    //         borderRadius: '8px',
-    //         border: 'none',
-    //         fontSize: '15px',
-    //         cursor: 'pointer',
-    //         backgroundColor: '#007bff',
-    //         color: '#fff'
-    //     },
-    //     cancelButton: {
-    //         backgroundColor: '#6c757d'
-    //     },
-    //     successMessage: {
-    //         color: 'green',
-    //         marginTop: '10px',
-    //         textAlign: 'center'
-    //     },
-    //     errorMessage: {
-    //         color: 'red',
-    //         marginTop: '10px',
-    //         textAlign: 'center'
-    //     }
-    // };
-
     if (loading) return <div style={{ textAlign: 'center' }}>Loading profile...</div>;
     if (error) return <div className='error-text'>{error}</div>;
     if (!userProfile) return <div className='error-text'>No user data found.</div>;

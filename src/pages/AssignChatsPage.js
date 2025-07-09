@@ -9,12 +9,7 @@ import { faSpinner, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid
 import ChatList from '../components/ChatList';
 import { changeAgentStatusApi } from '../api/auth';
 import Sidebar from '../components/Sidebar';
-import {
-  FaFacebookMessenger,
-  FaLine,
-  FaTelegramPlane,
-  FaWhatsapp,
-} from 'react-icons/fa';
+import { FaFacebookMessenger, FaLine, FaTelegramPlane,FaWhatsapp } from 'react-icons/fa';
 
 const CHATS_PER_PAGE = 20;
 
@@ -114,7 +109,7 @@ const AssignChatsPage = () => {
 
         try {
             const data = await getTeamsAndAgentsApi(user.orgId, user.token);
-            setTeams(data || []); // Data is directly the array of teams
+            setTeams(data || []);
         } catch (err) {
             console.error("Error fetching teams and agents:", err);
             setTeamsError("Failed to load teams and agents. " + (err.message || "Please try again."));

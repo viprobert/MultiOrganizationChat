@@ -199,7 +199,6 @@ const ChannelPage = () => {
         setChannelToDelete(null);
     };
 
-
     if (authLoading) {
         return (
             <div style={{ padding: '2rem', textAlign: 'center', fontSize: '1.5rem', color: '#777', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: '#f9f9f9' }}>

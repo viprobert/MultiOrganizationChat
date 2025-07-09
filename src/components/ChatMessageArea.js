@@ -149,7 +149,6 @@ const ChatMessageArea = ({ chatHistory, loading, error, currentAgentId, onAccept
                                 position: 'absolute',
                                 top: '50%',
                                 right: '20rem',
-                                // transform: 'translateY(-50%)',
                                 display: 'flex',
                                 gap: '1rem',
                                 backgroundColor: 'rgba(255,255,255,0.9)',

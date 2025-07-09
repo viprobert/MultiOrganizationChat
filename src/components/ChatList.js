@@ -18,6 +18,7 @@ const ChatList = ({
     const { user } = useAuth();
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredChats, setFilteredChats] = useState(chatList);    
+
     useEffect(() => {
          if (!user || !user.orgId) {
             setFilteredChats([]); 
@@ -36,6 +37,7 @@ const ChatList = ({
           setFilteredChats(orgFiltered);
         }
       }, [chatList, searchTerm]);
+      
     return (
         <section className="chat-list-section">
             <header className="header-panel" style={{ backgroundColor: '#f9f9f9' }}>

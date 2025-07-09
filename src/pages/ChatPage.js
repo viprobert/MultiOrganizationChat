@@ -9,12 +9,7 @@ import { setUserNoteApi } from '../api/notes';
 import { useSignalR } from '../hooks/useSignalR';
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    FaFacebookMessenger,
-    FaLine,
-    FaTelegramPlane,
-    FaWhatsapp,
-} from 'react-icons/fa';
+import { FaFacebookMessenger, FaLine, FaTelegramPlane, FaWhatsapp } from 'react-icons/fa';
 import ChatSideBar from '../components/ChatSideBar';
 import ChatList from '../components/ChatList';
 import ChatConversation from '../components/ChatConversation';
@@ -22,8 +17,8 @@ import ChatConversation from '../components/ChatConversation';
 const platformIcons = {
     LINE: <FaLine size={20} style={{ color: '#00B900' }} />,
     TELEGRAM: <FaTelegramPlane size={20} style={{ color: '#0088CC', paddingRight: '5px' }} />,
-    WhatsApp: <FaWhatsapp size={20} style={{ color: '#25D366' }} />,
-    Messenger: <FaFacebookMessenger size={20} style={{ color: '#0078FF' }} />,
+    WHATSAPP: <FaWhatsapp size={20} style={{ color: '#25D366' }} />,
+    MESSENGER: <FaFacebookMessenger size={20} style={{ color: '#0078FF' }} />,
 };
 
 const ChatPage = () => {
@@ -64,10 +59,10 @@ const ChatPage = () => {
     const [isNavigSectionVisible, setIsNavigSectionVisible] = useState(true);
 
     const isInitialMount = useRef(true);
-    const chatListRef = useRef(chatList); // Ref to hold the *latest* chatList for use in callbacks
+    const chatListRef = useRef(chatList);
 
     useEffect(() => {
-        chatListRef.current = chatList; // Keep the ref updated with the latest chatList state
+        chatListRef.current = chatList;
     }, [chatList]);
 
 
@@ -112,7 +107,6 @@ const ChatPage = () => {
                 );
             }
 
-            // De-duplication logic:
             if (resetList) {
                 setChatList(finalFilteredChats);
             } else {
@@ -124,16 +118,10 @@ const ChatPage = () => {
             }
             setHasMoreChats(finalFilteredChats.length === CHATS_PER_PAGE);
 
-            // If the selected chat is no longer in the list after a filter/search, deselect it.
-            // This check should ideally be done AFTER the list is fully updated by the fetch.
-            // Using a `setTimeout` or checking against the *newly set* chatList might be more robust,
-            // but for now, we'll ensure `fetchChatList` correctly updates the state.
-            // The `handleChatSelect` will ensure the chat history is cleared if selectedChat becomes null.
             if (selectedChat && pageToFetch === 1 && !finalFilteredChats.some(chat => chat.chatId === selectedChat.chatId)) {
                 setSelectedChat(null);
                 setCurrentChatHistory(null);
             }
-
         } catch (err) {
             console.error("Error fetching chat list:", err);
             setChatListError("Failed to load chat list. " + (err.message || "Please try again."));
@@ -171,9 +159,9 @@ const ChatPage = () => {
                 setLoadingDashboard(true);
                 setDashboardError(null);
 
-                const [channelsData, assignedChats, tagsData, allTags, teamsAgentsData] = await Promise.all([
+                const [channelsData, tagsData, allTags, teamsAgentsData] = await Promise.all([
                     getAllChannelsApi(user.orgId, user.token),
-                    getAssignedChatsByAgentStatusApi(user.userId, user.orgId, user.token),
+                    // getAssignedChatsByAgentStatusApi(user.userId, user.orgId, user.token),
                     getChatsByTagApi(user.orgId, user.userId, user.token),
                     getAllTagsApi(user.orgId, user.token),
                     getTeamsAndAgentsApi(user.orgId, user.token)
@@ -211,7 +199,7 @@ const ChatPage = () => {
             if (chatToUpdateIndex > -1) {
                 const updatedChats = [...prevChats];
                 const chatToUpdate = { ...updatedChats[chatToUpdateIndex] };
-                chatToUpdate.chatMessage = message; // This seems to store only the latest message
+                chatToUpdate.chatMessage = message; 
                 chatToUpdate.latestMsgTime = message.timeStamp;
 
                 if (selectedChat?.chatId !== message.chatId) {
@@ -224,22 +212,14 @@ const ChatPage = () => {
                 updatedChats.unshift(chatToUpdate);
                 return updatedChats;
             } else {
-                // If a new chat comes in (not found in current list),
-                // we should re-fetch from page 1 to ensure it appears at the top.
-                // This is the problematic part if it's over-triggering.
-                // We need to be careful: only fetch if the new chat SHOULD be on page 1 based on current filters.
-                // For simplicity and assuming "latestMsgTime" sorting, a new message for a chat not in the visible
-                // list means it might belong at the top, so a full re-fetch of page 1 is often necessary.
-                // However, we must ensure it doesn't cause duplicates.
-                // Given the `fetchChatList` now has de-duplication, this should be safer.
-                setCurrentPage(1); // Reset to page 1
-                fetchChatList(1, true); // Fetch first page and reset list
-                return prevChats; // Return prevChats for now, as fetchChatList will update the state
+                setCurrentPage(1); 
+                fetchChatList(1, true);
+                return prevChats;
             }
         });
 
         fetchAgentCounts();
-    }, [selectedChat, user?.userId, fetchChatList, fetchAgentCounts]); // Added fetchAgentCounts dependency
+    }, [selectedChat, user?.userId, fetchChatList, fetchAgentCounts]);
 
     const handleAcceptChat = useCallback(async (chatId) => {
         if (!user?.userId || !user?.orgId || !user?.token) {
@@ -286,38 +266,29 @@ const ChatPage = () => {
                 setSelectedChat(null);
                 setCurrentChatHistory(null);
             }
-            // After removing, re-fetch the current page to fill the gap if needed,
-            // but ensure it resets and doesn't add duplicates from page 1.
-            // Since currentPage might be > 1, fetching with true ensures reset for this specific action.
+            
             fetchChatList(currentPage, true);
-            fetchAgentCounts(); // Update counts
+            fetchAgentCounts();
         } catch (error) {
             console.error("Error rejecting chat:", error);
             alert("Failed to reject chat. Please try again.");
         }
     }, [user, fetchChatList, selectedChat, currentPage, fetchAgentCounts]);
 
-
     const handleChatUpdated = useCallback((chatUpdate) => {
-        // Use chatListRef.current to get the latest state without being a dependency of useCallback
         const currentChatList = chatListRef.current;
         const chatExistsInList = currentChatList.some(chat => chat.chatId === chatUpdate.chatId);
 
         if (!chatExistsInList) {
-            // If the chat doesn't exist in the current visible list,
-            // it means it might be a new chat or one that became visible due to filters.
-            // Reset to page 1 and trigger a full re-fetch.
             setCurrentPage(1);
-            fetchChatList(1, true); // This will replace the list and apply de-duplication
+            fetchChatList(1, true);
         } else {
-            // If the chat exists, just update its properties locally.
             setChatList(prevChats => {
                 return prevChats.map(chat => {
                     if (chat.chatId === chatUpdate.chatId) {
                         return {
                             ...chat,
                             ...chatUpdate,
-                            // Ensure unreadCount is preserved or updated correctly if not explicitly sent in chatUpdate
                             unreadCount: chatUpdate.unreadCount !== undefined ? chatUpdate.unreadCount : chat.unreadCount
                         };
                     }
@@ -326,14 +297,13 @@ const ChatPage = () => {
             });
         }
 
-
         setCurrentChatHistory(prevHistory => {
             if (prevHistory && prevHistory.chatId === chatUpdate.chatId) {
                 return {
                     ...prevHistory,
                     note: chatUpdate.note ?? prevHistory.note,
                     tagId: chatUpdate.tagId ?? prevHistory.tagId,
-                    ChatStatus: chatUpdate.status ?? prevHistory.ChatStatus, // Assuming status comes as ChatStatus
+                    ChatStatus: chatUpdate.status ?? prevHistory.ChatStatus,
                     assignedAgentId: chatUpdate.assignedAgentId ?? prevHistory.assignedAgentId,
                     acceptAssigned: chatUpdate.acceptAssigned
                 };
@@ -361,7 +331,7 @@ const ChatPage = () => {
         });
 
         fetchAgentCounts();
-    }, [fetchChatList, fetchAgentCounts]); // Removed chatList from dependencies, using chatListRef
+    }, [fetchChatList, fetchAgentCounts]);
 
     const { isConnected: isSignalRConnected, error: signalRError } = useSignalR(
         user?.userId,
@@ -433,7 +403,7 @@ const ChatPage = () => {
                     assignedAgentId: history.assignedAgentId
                 }));
 
-                const chatInList = chatListRef.current.find(c => c.chatId === chat.chatId); // Use ref here
+                const chatInList = chatListRef.current.find(c => c.chatId === chat.chatId);
                 if (chatInList?.unreadCount > 0) {
                     await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.[0]?.id || null, user.token);
                     setChatList(prevChats => prevChats.map(c =>
@@ -451,7 +421,7 @@ const ChatPage = () => {
                 setIsActionPanelLoading(false);
             }
         }
-    }, [user, fetchAgentCounts, selectedChat]); // Removed chatList from dependency, using chatListRef
+    }, [user, fetchAgentCounts, selectedChat]);
 
     const handleSetNote = async () => {
         if (!selectedChat?.chatId || !user?.token || currentChatNote === currentChatHistory?.note) return;
@@ -473,12 +443,12 @@ const ChatPage = () => {
     };
 
     const handleSetTag = async (tagId) => {
-        if (!selectedChat?.chatId || !user?.token || !tagId || tagId === selectedChat.TagId) return; // Check against selectedChat.TagId
+        if (!selectedChat?.chatId || !user?.token || !tagId || tagId === selectedChat.TagId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             await setUserTaggingApi(user.orgId, selectedChat.chatId, tagId, user.token);
-            setCurrentChatTags([tagId]); // Update currentChatTags for ChatConversation component
+            setCurrentChatTags([tagId]);
             setCurrentChatHistory(prev => ({ ...prev, tagId: tagId }));
             setSelectedChat(prevSelectedChat => ({
                 ...prevSelectedChat,
@@ -496,11 +466,11 @@ const ChatPage = () => {
     };
 
     const handleRemoveTag = async () => {
-        if (!selectedChat?.chatId || !user?.token || !selectedChat.TagId) return; // Check selectedChat.TagId
+        if (!selectedChat?.chatId || !user?.token || !selectedChat.TagId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            await removeTagFromUserApi(user.orgId, selectedChat.chatId, selectedChat.TagId, user.token); // Use selectedChat.TagId
+            await removeTagFromUserApi(user.orgId, selectedChat.chatId, selectedChat.TagId, user.token);
             setCurrentChatTags([]);
             setCurrentChatHistory(prev => ({ ...prev, tagId: null }));
             setSelectedChat(prevSelectedChat => ({
@@ -538,7 +508,7 @@ const ChatPage = () => {
     };
 
     const handleChangeChatStatus = async (chatStatus) => {
-        if (!selectedChat?.chatId || !user?.token || !chatStatus || chatStatus === selectedChat.chatStatus) return; // Note: using selectedChat.chatStatus here
+        if (!selectedChat?.chatId || !user?.token || !chatStatus || chatStatus === selectedChat.chatStatus) return; 
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
@@ -547,13 +517,12 @@ const ChatPage = () => {
             setCurrentChatHistory(prev => ({ ...prev, ChatStatus: chatStatus }));
             setSelectedChat(prevSelectedChat => ({
                 ...prevSelectedChat,
-                chatStatus: chatStatus // Ensure this matches the property name
+                chatStatus: chatStatus 
             }));
             setChatList(prevChats => prevChats.map(c =>
                 c.chatId === selectedChat.chatId ? { ...c, chatStatus: chatStatus } : c
             ));
             fetchAgentCounts();
-            // Trigger a re-fetch of the current page if status change might affect filtering
             fetchChatList(currentPage, true);
 
         } catch (err) {
