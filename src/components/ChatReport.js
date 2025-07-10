@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    LineChart, Line, AreaChart, Area
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+    LineChart, Line, AreaChart, Area } from 'recharts';
 
 const ChatReport = ({ data }) => {
     const chatVolumeByDate = React.useMemo(() => {

@@ -3,8 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAllTagsApi, createTagApi, getTagByIdApi, updateTagApi, deleteTagApi } from '../api/tags';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import Modal from '../components/Model';
 import { changeAgentStatusApi } from '../api/auth';
+import Modal from '../components/Model';
 import Sidebar from '../components/Sidebar';
 
 const TagPage = () => {
@@ -43,7 +43,6 @@ const TagPage = () => {
             setIsActionPanelLoading(false);
         }
     };
-
 
     const fetchTags = async () => {
         if (authLoading || !user?.token) return;
@@ -171,7 +170,6 @@ const TagPage = () => {
         setShowDeleteConfirm(false);
         setTagToDelete(null);
     };
-
 
     if (authLoading) {
         return (

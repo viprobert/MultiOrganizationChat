@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllChannelsApi, createChannelApi, getChannelByIdApi, updateChannelApi, deleteChannelApi } from '../api/channels';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faPlus, faEdit, faTrashAlt, faCopy } from '@fortawesome/free-solid-svg-icons';
-import Modal from '../components/Model';
+import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { changeAgentStatusApi } from '../api/auth';
+import Modal from '../components/Model';
 import Sidebar from '../components/Sidebar';
 
 const ChannelPage = () => {

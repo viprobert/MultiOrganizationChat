@@ -1,6 +1,4 @@
-import { FaRocketchat } from 'react-icons/fa';
 import {API_BASE_URL as API_URL} from '../config/api';
-
 const API_BASE_URL = API_URL;
 
 export const getChatReportAPI = async (reportRequest, token) => {

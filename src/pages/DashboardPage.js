@@ -1,14 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import '../index.css';
 import { Link } from 'react-router-dom';
 import { changeAgentStatusApi } from '../api/auth';
+import { getChatReportAPI, getAgentReportAPI, getTagReportAPI, getStatusReportAPI } from '../api/reports';
+import '../index.css';
 import Sidebar from '../components/Sidebar';
 import ChatReport from '../components/ChatReport';
 import AgentReport from '../components/AgentReport';
 import TagReport from '../components/TagReport';
 import StatusReport from '../components/StatusReport';
-import { getChatReportAPI, getAgentReportAPI, getTagReportAPI, getStatusReportAPI } from '../api/reports';
 
 const DashboardPage = () => {
     const { user, logout } = useAuth();
@@ -104,9 +104,7 @@ const DashboardPage = () => {
             setIsActionPanelLoading(false);
         }
     };
-
-
-        
+   
     return (
         <div className="container-full-height">
             <Sidebar

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { changeAgentStatusApi } from '../api/auth';
 import { getAllChannelsApi } from '../api/channels';
-import { getAssignedChatsByAgentStatusApi, getFilteredChatsApi, seenMessageApi, getChatMessageHistoryApi, assignChatToAgentApi, changeChatStatusApi, sendMessageApi, AcceptMessageApi } from '../api/chats';
+import { getAssignedChatsByAgentStatusApi, getFilteredChatsApi, seenMessageApi, getMessagesApi, getMessagesHistoryApi, assignChatToAgentApi, changeChatStatusApi, sendMessageApi, AcceptMessageApi } from '../api/chats';
 import { getChatsByTagApi, getAllTagsApi, setUserTaggingApi, removeTagFromUserApi } from '../api/tags';
 import { getTeamsAndAgentsApi } from '../api/teams';
 import { setUserNoteApi } from '../api/notes';
-import { useSignalR } from '../hooks/useSignalR';
+import { useSignalR } from '../hooks/useSignalR'; 
 import { faBars, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FaFacebookMessenger, FaLine, FaTelegramPlane, FaWhatsapp } from 'react-icons/fa';
@@ -65,6 +65,21 @@ const ChatPage = () => {
         chatListRef.current = chatList;
     }, [chatList]);
 
+    const fetchAgentCounts = useCallback(async () => {
+        if (!user?.orgId || !user?.token || !user?.userId) {
+            console.warn("Missing user info for fetching agent counts.");
+            return;
+        }
+        try {
+            const assignedChats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId, user.token);
+            const allAssignedCount = assignedChats.filter(chat => chat.assignedAgentId !== null).length;
+            const unAssignedCount = assignedChats.filter(chat => chat.assignedAgentId === null).length;
+            const unreadAssignedCount = assignedChats.filter(chat => chat.unreadCount > 0).length;
+            setAgentAssignedChatsCounts({ all: allAssignedCount, unread: unreadAssignedCount, unassigned: unAssignedCount });
+        } catch (err) {
+            console.error("Error fetching agent counts:", err);
+        }
+    }, [user?.orgId, user?.token, user?.userId]);
 
     const fetchChatList = useCallback(async (pageToFetch, resetList) => {
         if (!user?.token) {
@@ -121,6 +136,8 @@ const ChatPage = () => {
             if (selectedChat && pageToFetch === 1 && !finalFilteredChats.some(chat => chat.chatId === selectedChat.chatId)) {
                 setSelectedChat(null);
                 setCurrentChatHistory(null);
+                if (user?.userId) {
+                }
             }
         } catch (err) {
             console.error("Error fetching chat list:", err);
@@ -128,58 +145,7 @@ const ChatPage = () => {
         } finally {
             setChatListLoading(false);
         }
-    }, [user, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, selectedChat]);
-
-    const fetchAgentCounts = useCallback(async () => {
-        if (!user?.orgId || !user?.token || !user?.userId) {
-            console.warn("Missing user info for fetching agent counts.");
-            return;
-        }
-        try {
-            const assignedChats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId, user.token);
-            const allAssignedCount = assignedChats.filter(chat => chat.assignedAgentId !== null).length;
-            const unAssignedCount = assignedChats.filter(chat => chat.assignedAgentId === null).length;
-            const unreadAssignedCount = assignedChats.filter(chat => chat.unreadCount > 0).length;
-            setAgentAssignedChatsCounts({ all: allAssignedCount, unread: unreadAssignedCount, unassigned: unAssignedCount });
-        } catch (err) {
-            console.error("Error fetching agent counts:", err);
-        }
-    }, [user?.orgId, user?.token, user?.userId]);
-
-
-    useEffect(() => {
-        const fetchchatPageData = async () => {
-            if (!user?.orgId || !user?.token || !user?.userId) {
-                setDashboardError("User organization, ID, or token not found. Please re-login.");
-                setLoadingDashboard(false);
-                return;
-            }
-
-            try {
-                setLoadingDashboard(true);
-                setDashboardError(null);
-
-                const [channelsData, tagsData, allTags, teamsAgentsData] = await Promise.all([
-                    getAllChannelsApi(user.orgId, user.token),
-                    // getAssignedChatsByAgentStatusApi(user.userId, user.orgId, user.token),
-                    getChatsByTagApi(user.orgId, user.userId, user.token),
-                    getAllTagsApi(user.orgId, user.token),
-                    getTeamsAndAgentsApi(user.orgId, user.token)
-                ]);
-                setChannels(channelsData);
-                setTagsWithCounts(tagsData);
-                setAllAvailableTags(allTags);
-                setTeamsAndAgents(teamsAgentsData);
-                await fetchAgentCounts();
-            } catch (err) {
-                console.error("Error fetching dashboard initial data:", err);
-                setDashboardError("Failed to load dashboard data. " + (err.message || "Please try again."));
-            } finally {
-                setLoadingDashboard(false);
-            }
-        };
-        fetchchatPageData();
-    }, [user, user?.orgId, user?.userId, user?.token, fetchAgentCounts]);
+    }, [user, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, selectedChat]); 
 
     const handleReceiveMessage = useCallback((message) => {
         setCurrentChatHistory(prevHistory => {
@@ -199,7 +165,7 @@ const ChatPage = () => {
             if (chatToUpdateIndex > -1) {
                 const updatedChats = [...prevChats];
                 const chatToUpdate = { ...updatedChats[chatToUpdateIndex] };
-                chatToUpdate.chatMessage = message; 
+                chatToUpdate.chatMessage = message;
                 chatToUpdate.latestMsgTime = message.timeStamp;
 
                 if (selectedChat?.chatId !== message.chatId) {
@@ -212,68 +178,13 @@ const ChatPage = () => {
                 updatedChats.unshift(chatToUpdate);
                 return updatedChats;
             } else {
-                setCurrentPage(1); 
+                setCurrentPage(1);
                 fetchChatList(1, true);
                 return prevChats;
             }
         });
-
         fetchAgentCounts();
-    }, [selectedChat, user?.userId, fetchChatList, fetchAgentCounts]);
-
-    const handleAcceptChat = useCallback(async (chatId) => {
-        if (!user?.userId || !user?.orgId || !user?.token) {
-            console.error("User not authenticated for chat acceptance.");
-            return;
-        }
-
-        try {
-            await AcceptMessageApi(user.orgId, chatId, user.userId, true, user.token);
-            await fetchAgentCounts();
-
-            setSelectedChat(prevSelectedChat => {
-                if (prevSelectedChat && prevSelectedChat.chatId === chatId) {
-                    return {
-                        ...prevSelectedChat,
-                        assignedAgentId: user.userId,
-                        acceptAssigned: true,
-                        chatStatus: 'Assigned'
-                    };
-                }
-                return prevSelectedChat;
-            });
-            setChatList(prevChats => prevChats.map(chat =>
-                chat.chatId === chatId
-                    ? { ...chat, assignedAgentId: user.userId, chatStatus: 'Assigned' }
-                    : chat
-            ));
-
-        } catch (error) {
-            console.error("Error accepting chat:", error);
-            alert("Failed to accept chat. Please try again.");
-        }
-    }, [user, fetchAgentCounts, setSelectedChat]);
-
-    const handleRejectChat = useCallback(async (chatId) => {
-        if (!user?.userId || !user?.orgId || !user?.token) {
-            console.error("User not authenticated for chat rejection.");
-            return;
-        }
-        try {
-            await AcceptMessageApi(user.orgId, chatId, user.userId, false, user.token);
-            setChatList(prevChatList => prevChatList.filter(chat => chat.chatId !== chatId));
-            if (selectedChat?.chatId === chatId) {
-                setSelectedChat(null);
-                setCurrentChatHistory(null);
-            }
-            
-            fetchChatList(currentPage, true);
-            fetchAgentCounts();
-        } catch (error) {
-            console.error("Error rejecting chat:", error);
-            alert("Failed to reject chat. Please try again.");
-        }
-    }, [user, fetchChatList, selectedChat, currentPage, fetchAgentCounts]);
+    }, [selectedChat, user?.userId, fetchChatList, fetchAgentCounts]); 
 
     const handleChatUpdated = useCallback((chatUpdate) => {
         const currentChatList = chatListRef.current;
@@ -317,28 +228,155 @@ const ChatPage = () => {
                     ...prevSelectedChat,
                     ...chatUpdate,
                     acceptAssigned: chatUpdate.acceptAssigned !== undefined
-                            ? chatUpdate.acceptAssigned
-                            : prevSelectedChat.acceptAssigned,
+                                ? chatUpdate.acceptAssigned
+                                : prevSelectedChat.acceptAssigned,
                     assignedAgentId: chatUpdate.assignedAgentId !== undefined
-                                    ? chatUpdate.assignedAgentId
-                                    : prevSelectedChat.assignedAgentId,
+                                        ? chatUpdate.assignedAgentId
+                                        : prevSelectedChat.assignedAgentId,
                     chatStatus: chatUpdate.chatStatus !== undefined
-                                ? chatUpdate.chatStatus
-                                : prevSelectedChat.chatStatus
+                                        ? chatUpdate.chatStatus
+                                        : prevSelectedChat.chatStatus
                 };
             }
             return prevSelectedChat;
         });
 
         fetchAgentCounts();
-    }, [fetchChatList, fetchAgentCounts]);
+    }, [fetchChatList, fetchAgentCounts, selectedChat]);
 
-    const { isConnected: isSignalRConnected, error: signalRError } = useSignalR(
+
+    const { isConnected: isSignalRConnected, error: signalRError, agentOpenedChat, agentClosedChat } = useSignalR(
         user?.userId,
         user?.token,
         handleReceiveMessage,
         handleChatUpdated
     );
+
+    const resetFiltersAndFetch = useCallback(() => {
+        setCurrentPage(1);
+        setSelectedChat(null);
+        setCurrentChatHistory(null);
+        setHasMoreChats(true);
+        fetchChatList(1, true);
+        if (user?.userId) {
+            agentClosedChat(user.userId, selectedChat.chatId);
+        }
+    }, [fetchChatList, user?.userId, agentClosedChat]);
+
+    const handleRejectChat = useCallback(async (chatId) => {
+        if (!user?.userId || !user?.orgId || !user?.token) {
+            console.error("User not authenticated for chat rejection.");
+            return;
+        }
+        try {
+            await AcceptMessageApi(user.orgId, chatId, user.userId, false, user.token);
+            setChatList(prevChatList => prevChatList.filter(chat => chat.chatId !== chatId));
+            if (selectedChat?.chatId === chatId) {
+                setSelectedChat(null);
+                setCurrentChatHistory(null);
+                if (user?.userId) {
+                    agentClosedChat(user.userId, selectedChat.chatId);
+                }
+            }
+            
+            fetchChatList(currentPage, true);
+            fetchAgentCounts();
+        } catch (error) {
+            console.error("Error rejecting chat:", error);
+            setActionPanelError("Failed to reject chat. Please try again.");
+        }
+    }, [user, fetchChatList, selectedChat, currentPage, fetchAgentCounts, agentClosedChat]);
+
+    const handleChatSelect = useCallback(async (chat) => {
+        if (!selectedChat || selectedChat.chatId !== chat.chatId) {
+
+            if (selectedChat?.chatId && user?.userId) {
+                agentClosedChat(user.userId, selectedChat.chatId);
+            }
+
+            setSelectedChat(chat);
+            setCurrentChatHistory(null);
+            setCurrentChatNote('');
+            setCurrentChatTags([]);
+
+            try {
+                setIsActionPanelLoading(true);
+                setActionPanelError(null);
+
+                if (user?.userId) {
+                    agentOpenedChat(chat.chatId, user.userId);
+                }
+
+                const history = await getMessagesApi(chat.chatId, user.orgId, user.token);
+                setCurrentChatHistory(history);
+                setCurrentChatNote(history?.note || '');
+                setCurrentChatTags(history?.tagId ? [history.tagId] : []);
+
+                setSelectedChat(prevSelectedChat => ({
+                    ...prevSelectedChat,
+                    note: history.note,
+                    TagId: history.tagId,
+                    ChatStatus: history.ChatStatus,
+                    assignedAgentId: history.assignedAgentId
+                }));
+
+                const chatInList = chatListRef.current.find(c => c.chatId === chat.chatId);
+                if (chatInList?.unreadCount > 0) {
+                    await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.[0]?.id || null, user.token);
+
+                    setChatList(prevChats => prevChats.map(c =>
+                        c.chatId === chat.chatId ? { ...c, unreadCount: 0 } : c
+                    ));
+
+                    fetchAgentCounts();
+                }
+
+            } catch (err) {
+                console.error("Error fetching chat history or marking seen:", err);
+                setActionPanelError("Failed to load chat conversation: " + (err.message || "Unknown error."));
+                setCurrentChatHistory(null);
+                setSelectedChat(null);
+                if (user?.userId) {
+                    agentClosedChat(user.userId, selectedChat.chatId);
+                }
+            } finally {
+                setIsActionPanelLoading(false);
+            }
+        }
+    }, [user, fetchAgentCounts, selectedChat, agentOpenedChat, agentClosedChat]);
+
+    useEffect(() => {
+        const fetchchatPageData = async () => {
+            if (!user?.orgId || !user?.token || !user?.userId) {
+                setDashboardError("User organization, ID, or token not found. Please re-login.");
+                setLoadingDashboard(false);
+                return;
+            }
+
+            try {
+                setLoadingDashboard(true);
+                setDashboardError(null);
+
+                const [channelsData, tagsData, allTags, teamsAgentsData] = await Promise.all([
+                    getAllChannelsApi(user.orgId, user.token),
+                    getChatsByTagApi(user.orgId, user.userId, user.token),
+                    getAllTagsApi(user.orgId, user.token),
+                    getTeamsAndAgentsApi(user.orgId, user.token)
+                ]);
+                setChannels(channelsData);
+                setTagsWithCounts(tagsData);
+                setAllAvailableTags(allTags);
+                setTeamsAndAgents(teamsAgentsData);
+                await fetchAgentCounts();
+            } catch (err) {
+                console.error("Error fetching dashboard initial data:", err);
+                setDashboardError("Failed to load dashboard data. " + (err.message || "Please try again."));
+            } finally {
+                setLoadingDashboard(false);
+            }
+        };
+        fetchchatPageData();
+    }, [user, user?.orgId, user?.userId, user?.token, fetchAgentCounts]);
 
     useEffect(() => {
         if (!loadingDashboard && !dashboardError) {
@@ -377,51 +415,58 @@ const ChatPage = () => {
         }
     };
 
-    const handleChatSelect = useCallback(async (chat) => {
-        if (!selectedChat || selectedChat.chatId !== chat.chatId) {
-            setSelectedChat(chat);
-            setCurrentChatHistory(null);
-            setCurrentChatNote('');
-            setCurrentChatTags([]);
-
-            try {
-                setActionPanelError(null);
-                setIsActionPanelLoading(true);
-
-                const history = await getChatMessageHistoryApi(chat.chatId, user.orgId, user.token);
-                setCurrentChatHistory(history);
-
-                const noteContent = history?.note || '';
-                setCurrentChatNote(noteContent);
-                setCurrentChatTags(history?.tagId ? [history.tagId] : []);
-
-                setSelectedChat(prevSelectedChat => ({
-                    ...prevSelectedChat,
-                    note: history.note,
-                    TagId: history.tagId,
-                    ChatStatus: history.ChatStatus,
-                    assignedAgentId: history.assignedAgentId
-                }));
-
-                const chatInList = chatListRef.current.find(c => c.chatId === chat.chatId);
-                if (chatInList?.unreadCount > 0) {
-                    await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.[0]?.id || null, user.token);
-                    setChatList(prevChats => prevChats.map(c =>
-                        c.chatId === chat.chatId ? { ...c, unreadCount: 0 } : c
-                    ));
-                    fetchAgentCounts();
-                }
-
-            } catch (err) {
-                console.error("Error fetching chat history or marking seen:", err);
-                setActionPanelError("Failed to load chat conversation: " + (err.message || "Unknown error."));
-                setCurrentChatHistory(null);
-                setSelectedChat(null);
-            } finally {
-                setIsActionPanelLoading(false);
-            }
+    const handleAcceptChat = useCallback(async (chatId) => {
+        if (!user?.userId || !user?.orgId || !user?.token) {
+            console.error("User not authenticated for chat acceptance.");
+            return;
         }
-    }, [user, fetchAgentCounts, selectedChat]);
+
+        try {
+            await AcceptMessageApi(user.orgId, chatId, user.userId, true, user.token);
+            await fetchAgentCounts();
+
+            setSelectedChat(prevSelectedChat => {
+                if (prevSelectedChat && prevSelectedChat.chatId === chatId) {
+                    return {
+                        ...prevSelectedChat,
+                        assignedAgentId: user.userId,
+                        acceptAssigned: true,
+                        chatStatus: 'Assigned'
+                    };
+                }
+                return prevSelectedChat;
+            });
+            setChatList(prevChats => prevChats.map(chat =>
+                chat.chatId === chatId
+                    ? { ...chat, assignedAgentId: user.userId, chatStatus: 'Assigned' }
+                    : chat
+            ));
+
+        } catch (error) {
+            console.error("Error accepting chat:", error);
+            setActionPanelError("Failed to accept chat. Please try again.");
+        }
+    }, [user, fetchAgentCounts, setSelectedChat]);
+
+    const handleViewChatHistory = useCallback(async (chatId, orgId, token) => {
+        if (!chatId || !orgId || !token) {
+            console.error("Missing chat details for fetching full history.");
+            setActionPanelError("Cannot fetch full history: Missing chat details.");
+            return;
+        }
+
+        setIsActionPanelLoading(true);
+        setActionPanelError(null);
+        try {
+            const fullHistory = await getMessagesHistoryApi(chatId, orgId, token);
+            setCurrentChatHistory(fullHistory);
+        } catch (err) {
+            console.error("Error fetching full chat history:", err);
+            setActionPanelError("Failed to load full chat history: " + (err.message || "Unknown error."));
+        } finally {
+            setIsActionPanelLoading(false);
+        }
+    }, []);
 
     const handleSetNote = async () => {
         if (!selectedChat?.chatId || !user?.token || currentChatNote === currentChatHistory?.note) return;
@@ -508,7 +553,7 @@ const ChatPage = () => {
     };
 
     const handleChangeChatStatus = async (chatStatus) => {
-        if (!selectedChat?.chatId || !user?.token || !chatStatus || chatStatus === selectedChat.chatStatus) return; 
+        if (!selectedChat?.chatId || !user?.token || !chatStatus || chatStatus === selectedChat.chatStatus) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
@@ -517,7 +562,7 @@ const ChatPage = () => {
             setCurrentChatHistory(prev => ({ ...prev, ChatStatus: chatStatus }));
             setSelectedChat(prevSelectedChat => ({
                 ...prevSelectedChat,
-                chatStatus: chatStatus 
+                chatStatus: chatStatus
             }));
             setChatList(prevChats => prevChats.map(c =>
                 c.chatId === selectedChat.chatId ? { ...c, chatStatus: chatStatus } : c
@@ -551,26 +596,6 @@ const ChatPage = () => {
         };
 
         try {
-            setCurrentChatHistory(prevHistory => {
-                const newChatMessage = {
-                    id: `temp-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-                    chatId: selectedChat.chatId,
-                    senderType: 'Agent',
-                    senderUserId: user.userId,
-                    externalSenderId: user.userId,
-                    acceptAssigned: selectedChat.acceptAssigned,
-                    content: content,
-                    messageType: messageType,
-                    timeStamp: new Date().toISOString(),
-                    externalMessageId: null,
-                    status: 'sending'
-                };
-                return {
-                    ...prevHistory,
-                    chatMessage: [...(prevHistory?.chatMessage || []), newChatMessage]
-                };
-            });
-
             await sendMessageApi(messageData, user.token);
             fetchAgentCounts();
         } catch (err) {
@@ -593,14 +618,6 @@ const ChatPage = () => {
             setCurrentPage(prevPage => prevPage + 1);
         }
     };
-
-    const resetFiltersAndFetch = useCallback(() => {
-        setCurrentPage(1);
-        setSelectedChat(null);
-        setCurrentChatHistory(null);
-        setHasMoreChats(true);
-        fetchChatList(1, true);
-    }, [fetchChatList]);
 
     const handleChannelFilterChange = (channelId) => {
         setSelectedChannelId(channelId === 'All' ? null : channelId);
@@ -630,6 +647,14 @@ const ChatPage = () => {
         setSearchTerm(term);
         resetFiltersAndFetch();
     };
+
+    useEffect(() => {
+        return () => {
+            if (user?.userId && selectedChat?.chatId) {
+                agentClosedChat(user.userId, selectedChat.chatId);
+            }
+        };
+    }, [agentClosedChat, user?.userId, selectedChat?.chatId]);
 
 
     return (
@@ -711,6 +736,7 @@ const ChatPage = () => {
                     platformIcons={platformIcons}
                     onAcceptChat={handleAcceptChat}
                     onRejectChat={handleRejectChat}
+                    onViewChatHistory={handleViewChatHistory}
                 />
             </main>
         </div>

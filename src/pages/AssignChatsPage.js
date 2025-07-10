@@ -6,10 +6,10 @@ import { getAssignedChatsByAgentStatusApi, AssignMessageApi } from '../api/chats
 import { getTeamsAndAgentsApi } from '../api/teams';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
-import ChatList from '../components/ChatList';
-import { changeAgentStatusApi } from '../api/auth';
-import Sidebar from '../components/Sidebar';
 import { FaFacebookMessenger, FaLine, FaTelegramPlane,FaWhatsapp } from 'react-icons/fa';
+import { changeAgentStatusApi } from '../api/auth';
+import ChatList from '../components/ChatList';
+import Sidebar from '../components/Sidebar';
 
 const CHATS_PER_PAGE = 20;
 

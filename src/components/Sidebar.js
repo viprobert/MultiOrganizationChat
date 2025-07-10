@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from '../contexts/AuthContext';
 import { faPowerOff, faTag, faRoute, faUserPlus, faUserAstronaut,
-     faPeopleGroup, faUserTie, faGlobe, faSatelliteDish, faHand, faComment, faLaptop } from '@fortawesome/free-solid-svg-icons'; 
+        faPeopleGroup, faUserTie, faGlobe, faSatelliteDish, faHand, faComment, faLaptop } from '@fortawesome/free-solid-svg-icons'; 
 import { Link, useLocation } from 'react-router-dom';
 
 const Sidebar = ({
@@ -45,17 +45,27 @@ const Sidebar = ({
             }}
         >
             {/* Header/Agent */}
-            <div style={{ padding: '1.5rem', background: 'linear-gradient(to right, #007bff, #6610f2)', color: 'white', borderRadius: '0 0 1rem 0', alignItems: 'center', justifyContent: 'space-between', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                    <div>
-                        <Link to="/profile" style={{ textDecoration: 'none', color: 'white' }}>
+            <div style={{
+                padding: '1.5rem',
+                background: 'linear-gradient(to right, #007bff, #6610f2)',
+                color: 'white',
+                borderRadius: '0 0 1rem 0',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                display: 'flex',            
+                flexDirection: 'column',    
+                alignItems: 'center',       
+                justifyContent: 'center',   
+                textAlign: 'center'         
+            }}>
+                <div style={{ marginBottom: '10px' }}>
+                    <Link to="/profile" style={{ textDecoration: 'none', color: 'white' }}>
                         <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>{user?.userName || 'Agent'}</h2>
                         <p style={{ fontSize: '0.875rem', opacity: 0.9, margin: 0 }}>{user?.orgName || 'Organization'}</p>
-                        </Link>
-                    </div>
+                    </Link>
                 </div>
+
                 {/* Agent Status */}
-                    <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative' }}>
                     <button
                         onClick={handleAgentStatusToggle}
                         style={{
@@ -66,7 +76,7 @@ const Sidebar = ({
                             transition: 'background-color 0.2s ease', marginTop: '10px'
                         }}
                         onMouseOver={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#218838' : '#c82333'; }}
-                        onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                        onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#28a745' : '#dc3545'; }} {/* Revert to original color */}
                         title={`Click to go ${agentOnlineStatus ? 'Offline' : 'Online'}`}
                         disabled={isActionPanelLoading}
                     >

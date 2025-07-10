@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import * as signalR from '@microsoft/signalr'; 
 import {API_BASE_URL as API_URL} from '../config/api';
 const SIGNALR_HUB_URL = `${API_URL.replace('/api','')}/chatHub`;
@@ -7,6 +7,17 @@ export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
   const [isConnected, setIsConnected] = useState(false);
   const [error, setError] = useState(null);
   const connectionRef = useRef(null);
+
+  const onReceiveMessageRef = useRef(onReceiveMessage);
+  const onChatUpdatedRef = useRef(onChatUpdated);
+
+  useEffect(() => {
+      onReceiveMessageRef.current = onReceiveMessage;
+  }, [onReceiveMessage]);
+
+  useEffect(() => {
+      onChatUpdatedRef.current = onChatUpdated;
+  }, [onChatUpdated]);
 
   useEffect(() => {
     if (!userId || !token) {
@@ -30,19 +41,36 @@ export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
     connectionRef.current = newConnection;
 
     newConnection.on("ReceiveMessage", (message) => {
-      console.log("Received message from SignalR:", message);
-      onReceiveMessage(message);
+      //console.log("Received message from SignalR:", message);
+      //onReceiveMessage(message);
+      onReceiveMessageRef.current(message);
     });
 
     newConnection.on("ChatUpdated", (chatUpdate) => {
       console.log("Chat update from SignalR:", chatUpdate);
-      onChatUpdated(chatUpdate);
+      //onChatUpdated(chatUpdate);
+    });
+
+    newConnection.on("ChatOpenedConfirmation", (chatId) => {
+        //console.log(`Hub confirmed agent opened chat: ${chatId}`);
+    });
+
+    newConnection.on("ChatClosedConfirmation", () => {
+        //console.log(`Hub confirmed agent closed chat.`);
+    });
+
+    newConnection.on("Connected", (message) => {
+        console.log(message);
     });
 
     newConnection.onreconnected(connectionId => {
       console.log(`SignalR Reconnected: ${connectionId}`);
       setIsConnected(true);
       setError(null); 
+      if (userId && connectionRef.current?.state === signalR.HubConnectionState.Connected) {
+          connectionRef.current.invoke("ConnectToService", userId, "chat")
+              .catch(err => console.error("Error re-registering agent on reconnect:", err));
+      }
     });
 
     newConnection.onreconnecting(error => {
@@ -63,6 +91,7 @@ export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
         console.log("SignalR Connected.");
         setIsConnected(true);
         setError(null);
+        await newConnection.invoke("ConnectToService", userId, "chat");
       } catch (err) {
         console.error("SignalR Connection Error: ", err);
         setError("Failed to connect to real-time updates. " + (err.message || "Please refresh."));
@@ -79,7 +108,31 @@ export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
       }
       connectionRef.current = null;
     };
-  }, [userId, token, onReceiveMessage, onChatUpdated]); 
+  }, [userId, token]); 
 
-  return { isConnected, error };
+  const agentOpenedChat = useCallback(async (chatId, agentId) => {
+      if (connectionRef.current && connectionRef.current.state === signalR.HubConnectionState.Connected) {
+          try {
+              await connectionRef.current.invoke("AgentJoinedChat", chatId, agentId);
+          } catch (err) {
+              console.error(`[SignalR] Error invoking AgentJoinedChat for chat ${chatId}:`, err);
+          }
+      } else {
+          console.warn("SignalR connection not active, cannot invoke AgentJoinedChat.");
+      }
+  }, []);
+
+  const agentClosedChat = useCallback(async (agentId, chatId) => {
+      if (connectionRef.current && connectionRef.current.state === signalR.HubConnectionState.Connected) {
+          try {
+            await connectionRef.current.invoke("AgentLeftChat", agentId, chatId);
+          } catch (err) {
+              console.error("Error invoking AgentLeftChat:", err);
+          }
+      } else {
+          console.warn("SignalR connection not active, cannot invoke AgentLeftChat.");
+      }
+  }, []);
+
+  return { isConnected, error, agentOpenedChat, agentClosedChat };
 };

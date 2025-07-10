@@ -1,7 +1,5 @@
 import {API_BASE_URL as API_URL} from '../config/api';
-
 const API_BASE_URL = API_URL;
-
 
 export const loginApi = async (username, password) => {
   try {

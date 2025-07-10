@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { sendMessageApi } from '../api/chats';
-import { faEllipsisV, faNoteSticky, faArrowRightArrowLeft, faTag, faCommentDots, faPaperPlane, faStar } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisV, faNoteSticky, faArrowRightArrowLeft, faTag, faCommentDots, faPaperPlane, faStar, faHistory } from '@fortawesome/free-solid-svg-icons';
 import ChatMessageArea from './ChatMessageArea';
 import MessageInput from './MessageInput';
 
@@ -24,7 +24,8 @@ const ChatConversation = ({
     handleSendMessage,
     platformIcons,
     onAcceptChat,
-    onRejectChat
+    onRejectChat,
+    onViewChatHistory
 }) => {
     const { user } = useAuth();
     const [isActionPanelVisible, setIsActionPanelVisible] = useState(false);
@@ -68,7 +69,7 @@ const ChatConversation = ({
             return;
         }
 
-        const ratingUrl = `http://localhost:3000/customer-rating?` +
+        const ratingUrl = `https://okvipchatmanagement.pages.dev/customer-rating?` +
                          `OrgId=${encodeURIComponent(orgId)}&` +
                          `ChatId=${encodeURIComponent(chatId)}&` +
                          `AgentId=${encodeURIComponent(agentId)}&` +
@@ -259,7 +260,17 @@ const ChatConversation = ({
                                 >
                                     <FontAwesomeIcon icon={faStar} />
                                 </button>
-
+                                {selectedChat && ( 
+                                    <button
+                                        onClick={() => onViewChatHistory(selectedChat.chatId, user.orgId, user.token)} // Call the new prop
+                                        style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#007bff' }}
+                                        onMouseOver={e => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                                        onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                                        title="View Full Chat History"
+                                    >
+                                        <FontAwesomeIcon icon={faHistory} />
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => setIsActionPanelVisible(!isActionPanelVisible)}
                                     style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#555' }}

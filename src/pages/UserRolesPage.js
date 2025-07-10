@@ -3,11 +3,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAllUserRolesApi, createUserRoleApi, getUserRoleByIdApi, updateUserRoleApi, deleteUserRoleApi } from '../api/userrole';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import Modal from '../components/Model';
 import { changeAgentStatusApi } from '../api/auth';
-import Sidebar from '../components/Sidebar';
 import { getPermissionToAssignApi } from '../api/permission';
 import { getAllOrganizationsApi } from '../api/organization';
+import Modal from '../components/Model';
+import Sidebar from '../components/Sidebar';
 
 const UserRolesPage = () => {
     const { user, logout, loading: authLoading, error: authError } = useAuth();

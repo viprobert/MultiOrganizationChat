@@ -3,8 +3,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAllPermissionsApi, createPermissionApi, getPermissionByIdApi, updatePermissionApi, deletePermissionApi } from '../api/permission';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import Modal from '../components/Model';
 import { changeAgentStatusApi } from '../api/auth';
+import Modal from '../components/Model';
 import Sidebar from '../components/Sidebar';
 
 const PermissionPage = () => {

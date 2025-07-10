@@ -1,5 +1,4 @@
 import {API_BASE_URL as API_URL} from '../config/api';
-
 const API_BASE_URL = API_URL;
 
 export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) => {
@@ -26,9 +25,10 @@ export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) =>
   }
 };
 
-export const getChatMessageHistoryApi = async (chatId, orgId, token) => {
+//Get Latest 30 Messages
+export const getMessagesApi = async (chatId, orgId, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatMessageHistory?chatId=${chatId}&orgId=${orgId}`, {
+    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatMessages?chatId=${chatId}&orgId=${orgId}&count=30`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -45,10 +45,36 @@ export const getChatMessageHistoryApi = async (chatId, orgId, token) => {
     const data = await response.json();
     return data.data[0];
   } catch (error) {
-    console.error("Error fetching chat message history:", error);
+    console.error("Error fetching chat messages:", error);
     throw error;
   }
 };
+
+//Get All Messages
+export const getMessagesHistoryApi = async (chatId, orgId, token) => {
+  try{
+    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetMessagesHistory?chatId=${chatId}&orgId=${orgId}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.data[0];
+  }
+  catch (error) {
+    console.error("Error fetching chat messages history: ", error);
+    throw error;
+  }
+}
 
 export const seenMessageApi = async (orgId ,chatId, agentId, msgId, token) => {
   try {

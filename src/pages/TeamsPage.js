@@ -3,10 +3,10 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAllTeamsApi, createTeamApi, getTeamByIdApi, updateTeamApi, deleteTeamApi } from '../api/teams';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt, faTimes } from '@fortawesome/free-solid-svg-icons';
-import Modal from '../components/Model';
 import { changeAgentStatusApi } from '../api/auth';
-import Sidebar from '../components/Sidebar';
 import { getAllOrganizationsApi } from '../api/organization';
+import Modal from '../components/Model';
+import Sidebar from '../components/Sidebar';
 
 const TeamsPage = () => {
     const { user, logout, loading: authLoading, error: authError } = useAuth();

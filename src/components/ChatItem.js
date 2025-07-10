@@ -103,11 +103,11 @@ const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons 
                             {chat.displayname}
                         </h3>
                         {chat.unreadCount > 0 && (
-                            // <span style={{ backgroundColor: '#ff4444', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.125rem 0.5rem', borderRadius: '9999px', flexShrink: 0 }}>
-                            //     {chat.unreadCount}
-                            // </span>
-                            <span style={{ backgroundColor: '#ff4444', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.125rem', borderRadius: '50%', width: '0.75rem', height: '0.75rem', display: 'inline-block', flexShrink: 0 }}>
+                            <span style={{ backgroundColor: '#ff4444', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.125rem 0.5rem', borderRadius: '9999px', flexShrink: 0 }}>
+                                {chat.unreadCount}
                             </span>
+                            // <span style={{ backgroundColor: '#ff4444', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.125rem', borderRadius: '50%', width: '0.75rem', height: '0.75rem', display: 'inline-block', flexShrink: 0 }}>
+                            // </span>
                         )}
                     </div>
                     <p style={{
