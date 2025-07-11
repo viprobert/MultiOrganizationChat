@@ -258,10 +258,8 @@ const ChatPage = () => {
         setCurrentChatHistory(null);
         setHasMoreChats(true);
         fetchChatList(1, true);
-        if (user?.userId) {
-            agentClosedChat(user.userId, selectedChat.chatId);
-        }
-    }, [fetchChatList, user?.userId, agentClosedChat]);
+
+    }, [fetchChatList, user?.userId]);
 
     const handleRejectChat = useCallback(async (chatId) => {
         if (!user?.userId || !user?.orgId || !user?.token) {
@@ -275,7 +273,7 @@ const ChatPage = () => {
                 setSelectedChat(null);
                 setCurrentChatHistory(null);
                 if (user?.userId) {
-                    agentClosedChat(user.userId, selectedChat.chatId);
+                    agentClosedChat(user.userId, selectedChat?.chatId);
                 }
             }
             
@@ -291,7 +289,7 @@ const ChatPage = () => {
         if (!selectedChat || selectedChat.chatId !== chat.chatId) {
 
             if (selectedChat?.chatId && user?.userId) {
-                agentClosedChat(user.userId, selectedChat.chatId);
+                agentClosedChat(user.userId, selectedChat?.chatId);
             }
 
             setSelectedChat(chat);
@@ -337,7 +335,7 @@ const ChatPage = () => {
                 setCurrentChatHistory(null);
                 setSelectedChat(null);
                 if (user?.userId) {
-                    agentClosedChat(user.userId, selectedChat.chatId);
+                    agentClosedChat(user.userId, selectedChat?.chatId);
                 }
             } finally {
                 setIsActionPanelLoading(false);
@@ -651,7 +649,7 @@ const ChatPage = () => {
     useEffect(() => {
         return () => {
             if (user?.userId && selectedChat?.chatId) {
-                agentClosedChat(user.userId, selectedChat.chatId);
+                agentClosedChat(user.userId, selectedChat?.chatId);
             }
         };
     }, [agentClosedChat, user?.userId, selectedChat?.chatId]);

@@ -97,7 +97,7 @@ const ChatSideBar = ({
                             transition: 'background-color 0.2s ease', marginTop: '10px'
                         }}
                         onMouseOver={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#218838' : '#c82333'; }}
-                        onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#28a745' : '#dc3545'; }} {/* Revert to original color */}
+                        onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#28a745' : '#dc3545'; }}
                         title={`Click to go ${agentOnlineStatus ? 'Offline' : 'Online'}`}
                         disabled={isActionPanelLoading}
                     >

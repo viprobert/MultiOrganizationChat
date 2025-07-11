@@ -14,6 +14,7 @@ import PermissionPage from './pages/PermissionPage';
 import CustomerRatingPage from './pages/CustomerRatingPage.js';
 import ChatPage from './pages/ChatPage.js';
 import AssignChatsPage from './pages/AssignChatsPage.js';
+import SuperAdminDashboard from './pages/SuperAdminDashboard.js';
 import NotFoundPage from './pages/NotFoundPage';
 
 const ProtectedRoute = ({ children, requiredPermission }) => {
@@ -66,6 +67,9 @@ const AppContent = () => {
       if (location.pathname === '/' || location.pathname === '/login'){
         if (user?.permissions?.includes('dashboard_view')){
           navigate('/dashboard', { replace: true });
+        }
+        else if (user?.permissions?.includes('superadmin_dashboard_view')){
+          navigate('/superadmin_dashboard', { replace: true });
         }
         else if (user?.permissions?.includes('chat_view')) { 
           navigate('/chat', { replace: true });
@@ -130,6 +134,14 @@ const AppContent = () => {
         element={
           <ProtectedRoute requiredPermission="dashboard_view">
             <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/superadmin_dashboard"
+        element={
+          <ProtectedRoute requiredPermission="superadmin_dashboard_view">
+            <SuperAdminDashboard />
           </ProtectedRoute>
         }
       />

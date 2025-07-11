@@ -80,7 +80,7 @@ export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
     });
 
     newConnection.onclose(error => {
-      console.error(`SignalR Connection closed: ${error}`);
+      console.warn(`SignalR Connection closed: ${error}`);
       setIsConnected(false);
       setError("Connection closed. Attempting to reconnect...");
     });

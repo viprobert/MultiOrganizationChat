@@ -76,7 +76,7 @@ const Sidebar = ({
                             transition: 'background-color 0.2s ease', marginTop: '10px'
                         }}
                         onMouseOver={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#218838' : '#c82333'; }}
-                        onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#28a745' : '#dc3545'; }} {/* Revert to original color */}
+                        onMouseOut={e => { if (!e.currentTarget.disabled) e.currentTarget.style.backgroundColor = agentOnlineStatus ? '#28a745' : '#dc3545'; }}
                         title={`Click to go ${agentOnlineStatus ? 'Offline' : 'Online'}`}
                         disabled={isActionPanelLoading}
                     >
@@ -103,6 +103,17 @@ const Sidebar = ({
                                 <Link to="/dashboard" style={getLinkStyle('/dashboard')}
                                     onMouseOver={e => { if (location.pathname !== '/dashboard') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/dashboard') e.currentTarget.style.backgroundColor = 'transparent'; }}
+                                >
+                                    <FontAwesomeIcon icon={faLaptop} style={{ marginRight: '0.5rem' }} beat />
+                                    Dashboard
+                                </Link>
+                            </li>
+                        )}
+                        {user?.isSuperAdmin && hasPermission('superadmin_dashboard_view') && (
+                            <li>
+                                <Link to="/superadmin_dashboard" style={getLinkStyle('/superadmin_dashboard')}
+                                    onMouseOver={e => { if (location.pathname !== '/superadmin_dashboard') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
+                                    onMouseOut={e => { if (location.pathname !== '/superadmin_dashboard') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
                                     <FontAwesomeIcon icon={faLaptop} style={{ marginRight: '0.5rem' }} beat />
                                     Dashboard

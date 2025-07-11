@@ -101,3 +101,27 @@ export const getStatusReportAPI = async (reportRequest, token) => {
     throw error;
   }
 }
+
+export const getSuperAdminReportAPI = async (startDate, endDate, token) => {
+  try{
+    const response = await fetch(`${API_BASE_URL}/Setting/SuperAdminReport?startDate=${startDate}&endDate=${endDate}`,{
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        'ngrok-skip-browser-warning': 'true',
+      }
+    });
+
+    if (!response.ok){
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return { success: true, data: data.data };  
+  }
+  catch (error) {
+    console.error('Error getting Super Admin report: ', error);
+    throw error;
+  }
+}
