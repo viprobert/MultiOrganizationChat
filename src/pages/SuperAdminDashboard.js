@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getSuperAdminReportAPI } from '../api/reports';
 import { changeAgentStatusApi } from '../api/auth';
-import ChatVolumeChart from '../components/SuperAdminChatVolume'; 
+import { getAllOrganizationsApi } from '../api/organization';
+import ChatVolumeChart from '../components/SuperAdminChatVolume';
 import ResolvedCountChart from '../components/SuperAdminResolve';
 import CSATScoreChart from '../components/SuperAdminCSAT';
 import Sidebar from '../components/Sidebar';
@@ -13,7 +14,7 @@ const getDatesInRange = (startDateStr, endDateStr) => {
     const end = new Date(endDateStr);
 
     while (currentDate <= end) {
-        dates.push(currentDate.toISOString().split('T')[0]); 
+        dates.push(currentDate.toISOString().split('T')[0]);
         currentDate.setDate(currentDate.getDate() + 1);
     }
     return dates;
@@ -29,7 +30,10 @@ const SuperAdminDashboardPage = () => {
     const [agentOnlineStatus, setAgentOnlineStatus] = useState(user?.isOnline ?? false);
     const [actionPanelError, setActionPanelError] = useState(null);
     const [isActionPanelLoading, setIsActionPanelLoading] = useState(false);
-    
+
+    const [allOrganizations, setAllOrganizations] = useState([]);
+    const [organizationsLoading, setOrganizationsLoading] = useState(true);
+
     const [startDate, setStartDate] = useState(() => {
         const today = new Date();
         const sevenDaysAgo = new Date(today);
@@ -37,6 +41,7 @@ const SuperAdminDashboardPage = () => {
         return sevenDaysAgo.toISOString().split('T')[0];
     });
     const [endDate, setEndDate] = useState(() => new Date().toISOString().split('T')[0]);
+    const [orgId, setOrgId] = useState('');
 
     const handleAgentStatusToggle = async () => {
         if (!user?.userId || !user?.token) return;
@@ -54,7 +59,22 @@ const SuperAdminDashboardPage = () => {
         }
     };
 
-    const fetchSuperAdminReports = useCallback(async () => {
+    const fetchDropdownData = async () => {
+        if (!user?.token) {
+            return;
+        }
+        try {
+            const orgs = await getAllOrganizationsApi(null, user.token);
+            setAllOrganizations(orgs);
+        } catch (err) {
+            console.error("Error fetching organizations:", err);
+        }
+        finally{
+            setOrganizationsLoading(false);
+        }
+    };
+
+    const fetchSuperAdminReports = useCallback(async (currentStartDate, currentEndDate, currentOrgId) => {
         if (!user.token) {
             setError("Authentication token is missing. Please ensure you are logged in.");
             setLoading(false);
@@ -65,7 +85,7 @@ const SuperAdminDashboardPage = () => {
         setError(null);
 
         try {
-            const response = await getSuperAdminReportAPI(startDate, endDate, user?.token);
+            const response = await getSuperAdminReportAPI(currentStartDate, currentEndDate, currentOrgId, user?.token);
 
             if (response.success && response.data && response.data.orgsData) {
                 const processedOrgsData = response.data.orgsData.map(org => {
@@ -75,15 +95,15 @@ const SuperAdminDashboardPage = () => {
                         dailyMetricsMap.set(dateKey, metric);
                     });
 
-                    const allDatesInRange = getDatesInRange(startDate, endDate);
+                    const allDatesInRange = getDatesInRange(currentStartDate, currentEndDate);
 
                     const filledMetrics = allDatesInRange.map(dateStr => {
                         const existingMetric = dailyMetricsMap.get(dateStr);
                         if (existingMetric) {
-                            return existingMetric; 
+                            return existingMetric;
                         } else {
                             return {
-                                date: `${dateStr}T00:00:00.000Z`, 
+                                date: `${dateStr}T00:00:00.000Z`,
                                 totalChatVolume: 0,
                                 resolvedCount: 0,
                                 csat: 0
@@ -95,7 +115,7 @@ const SuperAdminDashboardPage = () => {
 
                     return {
                         ...org,
-                        dailyMetrics: filledMetrics 
+                        dailyMetrics: filledMetrics
                     };
                 });
                 setOrgsData(processedOrgsData);
@@ -106,23 +126,24 @@ const SuperAdminDashboardPage = () => {
             console.error("Error fetching super admin reports:", err);
             setError(`Failed to load reports: ${err.message || "Unknown error."}`);
         } finally {
-            setLoading(false); 
+            setLoading(false);
         }
-    }, [startDate, endDate, user.token]); 
+    }, [user.token]); 
 
     useEffect(() => {
-        fetchSuperAdminReports();
-    }, [fetchSuperAdminReports]); 
+        fetchDropdownData();
+        fetchSuperAdminReports(startDate, endDate, orgId);
+    }, [fetchSuperAdminReports, startDate, endDate, orgId]);
 
     const mainContentStyle = {
         marginLeft: isSidebarOpen ? '250px' : '0',
         padding: '40px',
-        transition: 'margin-left 0.3s ease', 
-        fontFamily: 'Inter, sans-serif', 
-        backgroundColor: '#ffffff', 
+        transition: 'margin-left 0.3s ease',
+        fontFamily: 'Inter, sans-serif',
+        backgroundColor: '#ffffff',
         borderRadius: '0.75rem',
-        boxShadow: '0 0px 15px rgba(0,0,0,0.1)', 
-        flex: 1, 
+        boxShadow: '0 0px 15px rgba(0,0,0,0.1)',
+        flex: 1,
         paddingTop: '20px',
         paddingBottom: '20px',
         overflowY: 'auto',
@@ -138,7 +159,7 @@ const SuperAdminDashboardPage = () => {
             justifyContent: 'flex-start',
             minHeight: '100vh',
             width: '100vw',
-            overflow: 'hidden', 
+            overflow: 'hidden',
             backgroundColor: '#f0f2f5'
             }}>
             <Sidebar
@@ -161,8 +182,8 @@ const SuperAdminDashboardPage = () => {
                     padding: '15px 20px',
                     marginBottom: '30px',
                     display: 'flex',
-                    flexWrap: 'wrap', 
-                    gap: '15px', 
+                    flexWrap: 'wrap',
+                    gap: '15px',
                     alignItems: 'center'
                 }}>
                     <label htmlFor="startDate" style={{ color: '#555', fontWeight: 'bold' }}>From:</label>
@@ -193,11 +214,30 @@ const SuperAdminDashboardPage = () => {
                             outline: 'none'
                         }}
                     />
-                    <button
-                        onClick={fetchSuperAdminReports} 
-                        disabled={loading} 
+                    <label htmlFor="orgId" style={{ color: '#555', fontWeight: 'bold' }}>Organization:</label>
+                    <select
+                        id="orgId"
+                        name="orgId"
+                        value={orgId}
+                        onChange={(e) => setOrgId(e.target.value)}
                         style={{
-                            backgroundColor: '#28a745', 
+                            padding: '8px 12px',
+                            border: '1px solid #ccc',
+                            borderRadius: '5px',
+                            fontSize: '1em',
+                            outline: 'none'
+                        }}
+                    >
+                        <option value="">Select Organization</option>
+                        {allOrganizations.map(org => (
+                            <option key={org.id} value={org.id}>{org.name}</option>
+                        ))}
+                    </select>
+                    <button
+                        onClick={() => fetchSuperAdminReports(startDate, endDate, orgId)}
+                        disabled={loading}
+                        style={{
+                            backgroundColor: '#28a745',
                             color: 'white',
                             border: 'none',
                             borderRadius: '5px',
@@ -206,12 +246,12 @@ const SuperAdminDashboardPage = () => {
                             fontSize: '1em',
                             boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                             transition: 'background-color 0.2s ease',
-                            opacity: loading ? 0.7 : 1 
+                            opacity: loading ? 0.7 : 1
                         }}
                         onMouseEnter={(e) => !loading && (e.target.style.backgroundColor = '#218838')}
                         onMouseLeave={(e) => !loading && (e.target.style.backgroundColor = '#28a745')}
                     >
-                        {loading ? 'Loading...' : 'Apply Date Range'}
+                        {loading ? 'Loading...' : 'Apply'}
                     </button>
                 </div>
 
@@ -219,7 +259,7 @@ const SuperAdminDashboardPage = () => {
                 {loading && <p style={{ textAlign: 'center', fontSize: '1.2em', color: '#555' }}>Loading organization data...</p>}
                 {error && (
                     <div style={{
-                        backgroundColor: '#ffebee', 
+                        backgroundColor: '#ffebee',
                         color: '#d32f2f',
                         padding: '15px',
                         borderRadius: '8px',

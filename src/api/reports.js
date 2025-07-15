@@ -102,9 +102,18 @@ export const getStatusReportAPI = async (reportRequest, token) => {
   }
 }
 
-export const getSuperAdminReportAPI = async (startDate, endDate, token) => {
+export const getSuperAdminReportAPI = async (startDate, endDate, orgId, token) => {
+  let url = `${API_BASE_URL}/Setting/SuperAdminReport?startDate=${startDate}&endDate=${endDate}`;
+  const queryParams = new URLSearchParams();
+
+  if (orgId !== undefined && orgId !== null && orgId !== ''){
+     queryParams.append('orgId', orgId.toString());
+  }
+  if (queryParams.toString()) {
+        url += `&${queryParams.toString()}`;
+  }
   try{
-    const response = await fetch(`${API_BASE_URL}/Setting/SuperAdminReport?startDate=${startDate}&endDate=${endDate}`,{
+    const response = await fetch(url,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

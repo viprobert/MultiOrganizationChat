@@ -150,6 +150,12 @@ const TeamsPage = () => {
             return;
         }
 
+        if (user?.isSuperAdmin && (teamForm.name.trim().toLowerCase() !== "admin" || teamForm.name.trim().toLowerCase() !== "manager")){
+            setFormError("SuperAdmin can only create Admin team or Manager team.")
+            setIsSaving(false);
+            return;
+        }
+
         try {
             if (editingTeam) {
                 await updateTeamApi({
@@ -172,7 +178,7 @@ const TeamsPage = () => {
             fetchTeams(); 
         } catch (err) {
             console.error("Error saving team:", err);
-            setFormError("Failed to save team.");
+            setFormError("Failed to save team: ", err);
         } finally {
             setIsSaving(false);
         }

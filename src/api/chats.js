@@ -25,10 +25,10 @@ export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) =>
   }
 };
 
-//Get Latest 30 Messages
+//Get Latest 20 Messages
 export const getMessagesApi = async (chatId, orgId, token) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatMessages?chatId=${chatId}&orgId=${orgId}&count=30`, {
+    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatMessages?chatId=${chatId}&orgId=${orgId}&count=20`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

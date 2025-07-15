@@ -189,6 +189,12 @@ const UserRolesPage = () => {
             return;
         }
 
+        if (user?.isSuperAdmin && (roleForm.roleName.trim().toLowerCase() !== "admin" || roleForm.roleName.trim().toLowerCase() !== "manager")){
+            setFormError("SuperAdmin can only create Admin role or Manager role.")
+            setIsSaving(false);
+            return;
+        }
+
         if (roleForm.selectedPermissionIds.length === 0) {
             setFormError("At least one permission must be selected.");
             setIsSaving(false);
