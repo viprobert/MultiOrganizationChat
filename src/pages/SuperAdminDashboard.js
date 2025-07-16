@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getSuperAdminReportAPI } from '../api/reports';
-import { changeAgentStatusApi } from '../api/auth';
+import { changeAgentStatusApi } from '../api/user';
 import { getAllOrganizationsApi } from '../api/organization';
 import ChatVolumeChart from '../components/SuperAdminChatVolume';
 import ResolvedCountChart from '../components/SuperAdminResolve';

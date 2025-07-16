@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext'; 
-import { getUserByIdApi, changePasswordAPI, updateProfileApi } from '../api/user'; 
-import { changeAgentStatusApi } from '../api/auth';
+import { getUserByIdApi, updateProfileApi , changeAgentStatusApi } from '../api/user'; 
+import { changePasswordAPI } from '../api/auth';
 import Sidebar from '../components/Sidebar';
 
 const UserProfile = () => {

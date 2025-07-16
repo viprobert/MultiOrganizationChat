@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { changeAgentStatusApi } from '../api/auth';
+import { changeAgentStatusApi } from '../api/user';
 import { getAllChannelsApi } from '../api/channels';
 import { getAssignedChatsByAgentStatusApi, getFilteredChatsApi, seenMessageApi, getMessagesApi, 
         getMessagesHistoryApi, assignChatToAgentApi, changeChatStatusApi, sendMessageApi, AcceptMessageApi } from '../api/chats';

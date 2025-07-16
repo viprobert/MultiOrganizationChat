@@ -7,7 +7,7 @@ import { getTeamsAndAgentsApi } from '../api/teams';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons';
 import { FaFacebookMessenger, FaLine, FaTelegramPlane,FaWhatsapp } from 'react-icons/fa';
-import { changeAgentStatusApi } from '../api/auth';
+import { changeAgentStatusApi } from '../api/user';
 import ChatList from '../components/ChatList';
 import Sidebar from '../components/Sidebar';
 
@@ -74,7 +74,7 @@ const AssignChatsPage = () => {
             const chats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId,  user.token);
 
             const strictlyUnassignedChats = chats.filter(chat =>
-                chat.assignedAgentId === null || chat.acceptAssigned == false
+                chat.assignedAgentId === null || chat.acceptAssigned === false
             );
 
             if (resetList) {

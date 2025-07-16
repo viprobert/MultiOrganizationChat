@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAllTagsApi, createTagApi, getTagByIdApi, updateTagApi, deleteTagApi } from '../api/tags';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { changeAgentStatusApi } from '../api/auth';
+import { changeAgentStatusApi } from '../api/user';
 import Modal from '../components/Model';
 import Sidebar from '../components/Sidebar';
 

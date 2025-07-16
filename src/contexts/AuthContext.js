@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { loginApi, generateTwoFactorSetupApi, verifyTwoFactorSetupApi, disableTwoFactorApi, 
-        completeTwoFactorSetupApi, checkUserApi, forgetPasswordApi  } from '../api/auth';
-
+        completeTwoFactorSetupApi, forgetPasswordApi  } from '../api/auth';
+import { checkUserApi } from '../api/user';
 const AuthContext = createContext(null);
 
 export const useAuth = () => {
@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await loginApi(username, password, twoFactorCode, recoveryCode);
-            if (response.code == 400){
+            if (response.code === 400){
                 setLoading(false);
                 setError(response.message);
             }

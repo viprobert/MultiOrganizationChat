@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { Link } from 'react-router-dom';
-import { changeAgentStatusApi } from '../api/auth';
+import { changeAgentStatusApi } from '../api/user';
 import { getChatReportAPI, getAgentReportAPI, getTagReportAPI, getStatusReportAPI } from '../api/reports';
 import '../index.css';
 import Sidebar from '../components/Sidebar';

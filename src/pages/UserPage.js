@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getAllUsersApi, createUserApi, getUserByIdApi, updateUserApi, deleteUserApi} from '../api/user';
+import { getAllUsersApi, createUserApi, getUserByIdApi, updateUserApi, deleteUserApi, changeAgentStatusApi } from '../api/user';
 import { getAllTeamsApi } from '../api/teams';
 import { getAllUserRolesApi } from '../api/userrole';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { getAllOrganizationsApi } from '../api/organization';
-import { changeAgentStatusApi } from '../api/auth';
 import Modal from '../components/Model';
 import Sidebar from '../components/Sidebar';
 

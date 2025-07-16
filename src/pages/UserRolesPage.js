@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { getAllUserRolesApi, createUserRoleApi, getUserRoleByIdApi, updateUserRoleApi, deleteUserRoleApi } from '../api/userrole';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSpinner, faPlus, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { changeAgentStatusApi } from '../api/auth';
+import { changeAgentStatusApi } from '../api/user';
 import { getPermissionToAssignApi } from '../api/permission';
 import { getAllOrganizationsApi } from '../api/organization';
 import Modal from '../components/Model';

@@ -27,32 +27,6 @@ export const loginApi = async (username, password) => {
   }
 };
 
-export const changeAgentStatusApi = async (agentId, isOnline, token) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/Authentication/ChangeStatus`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        // 'ngrok-skip-browser-warning': '69420',
-        'ngrok-skip-browser-warning': 'true',
-      },
-      body: JSON.stringify({ agentId, isOnline }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-    }
-
-    return { success: true };
-
-  } catch (error) {
-    console.error("Error changing agent status API call:", error);
-    throw error;
-  }
-};
-
 export const generateTwoFactorSetupApi = async (userId) => {
   try{
     const response = await fetch(`${API_BASE_URL}/Authentication/twofactor/generate-setup`, {
@@ -150,29 +124,28 @@ export const disableTwoFactorApi = async (userId, code, token) => {
   }
 }
 
-export const checkUserApi = async (email) => {
+export const changePasswordAPI = async (passData, token) => {
   try{
-    const response = await fetch(`${API_BASE_URL}/Authentication/CheckUserByEmail?email=${email}`, {
-      method: 'GET',
+    const response = await fetch(`${API_BASE_URL}/Authentication/ChangePassword`, {
+      method: 'PUT',
       headers: {
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
-        //'Authorization': `Bearer ${token}`,
-        // 'ngrok-skip-browser-warning': '69420',
         'ngrok-skip-browser-warning': 'true',
-      }
+      },
+      body: JSON.stringify(passData),
     });
 
-    if (!response.ok){
+    if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
-    const data = await response.json();
-    return data.data;
-  } catch (error){
-    console.error("Error checking User By Email API call:", error);
+  }
+  catch(error){
+    console.error("Error Password Change for user:", error);
     throw error;
   }
-};
+}
 
 export const forgetPasswordApi = async (email, otp, password) => {
   try{
