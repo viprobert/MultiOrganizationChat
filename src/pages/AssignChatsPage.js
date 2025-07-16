@@ -45,21 +45,21 @@ const AssignChatsPage = () => {
     const [isActionPanelLoading, setIsActionPanelLoading] = useState(false);
 
 
-     const handleAgentStatusToggle = async () => {
-            if (!user?.userId || !user?.token) return;
-            setIsActionPanelLoading(true);
-            setActionPanelError(null);
-            try {
-                const newStatus = !agentOnlineStatus;
-                await changeAgentStatusApi(user.userId, newStatus, user.token);
-                setAgentOnlineStatus(newStatus);
-            } catch (err) {
-                console.error("Failed to change agent status:", err);
-                setActionPanelError("Failed to change status: " + (err.message || "Unknown error."));
-            } finally {
-                setIsActionPanelLoading(false);
-            }
-        };
+    const handleAgentStatusToggle = async () => {
+        if (!user?.userId || !user?.token) return;
+        setIsActionPanelLoading(true);
+        setActionPanelError(null);
+        try {
+            const newStatus = !agentOnlineStatus;
+            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            setAgentOnlineStatus(newStatus);
+        } catch (err) {
+            console.error("Failed to change agent status:", err);
+            setActionPanelError("Failed to change status: " + (err.message || "Unknown error."));
+        } finally {
+            setIsActionPanelLoading(false);
+        }
+    };
 
     const fetchUnassignedChats = useCallback(async (pageToFetch = 1, resetList = false) => {
         if (!user?.token) {

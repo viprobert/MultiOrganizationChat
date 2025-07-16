@@ -2,7 +2,8 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { changeAgentStatusApi } from '../api/auth';
 import { getAllChannelsApi } from '../api/channels';
-import { getAssignedChatsByAgentStatusApi, getFilteredChatsApi, seenMessageApi, getMessagesApi, getMessagesHistoryApi, assignChatToAgentApi, changeChatStatusApi, sendMessageApi, AcceptMessageApi } from '../api/chats';
+import { getAssignedChatsByAgentStatusApi, getFilteredChatsApi, seenMessageApi, getMessagesApi, 
+        getMessagesHistoryApi, assignChatToAgentApi, changeChatStatusApi, sendMessageApi, AcceptMessageApi } from '../api/chats';
 import { getChatsByTagApi, getAllTagsApi, setUserTaggingApi, removeTagFromUserApi } from '../api/tags';
 import { getTeamsAndAgentsApi } from '../api/teams';
 import { setUserNoteApi } from '../api/notes';
