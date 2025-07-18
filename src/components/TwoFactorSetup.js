@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { QRCodeSVG } from 'qrcode.react'; 
 
-function TwoFactorSetup({ otpAuthUri, manualKey, onComplete }) {
+function TwoFactorSetup({ otpAuthUri, manualKey, recoveryCode, onComplete }) {
     const [code, setCode] = useState('');
     const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -51,7 +51,14 @@ function TwoFactorSetup({ otpAuthUri, manualKey, onComplete }) {
             <button onClick={handleVerifySetup} disabled={isLoading} className='tfa-button'>
                 {isLoading ? 'Verifying...' : 'Verify and Complete Setup'}
             </button>
-
+            
+            {recoveryCode && (
+                <>
+                    <p className='tfa-manualentry' style={{ marginTop: '1.5rem' }}>Your **Recovery Code**. Keep it safe and secure!</p>
+                    <p className='tfa-manualentrykey'><strong>{recoveryCode}</strong></p>
+                </>
+            )}
+            
             {message && <p className='tfa-message' style={{ color: message.includes('success') ? 'green' : 'red' }}>{message}</p>}
         </div>
     );

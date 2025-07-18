@@ -79,16 +79,22 @@ const AssignChatsPage = () => {
 
             if (resetList) {
                 setUnassignedChats(strictlyUnassignedChats);
+                // setUnassignedChats(chats);
                 setCurrentUnassignedPage(1);
             } else {
+              //  setUnassignedChats(prevChats => [...prevChats, ...chats]);
                 setUnassignedChats(prevChats => [...prevChats, ...strictlyUnassignedChats]);
                 setCurrentUnassignedPage(pageToFetch);
             }
+            //setHasMoreUnassignedChats(chats.length === CHATS_PER_PAGE);
             setHasMoreUnassignedChats(strictlyUnassignedChats.length === CHATS_PER_PAGE);
 
             if (selectedUnassignedChat && !strictlyUnassignedChats.some(chat => chat.chatId === selectedUnassignedChat.chatId)) {
                 setSelectedUnassignedChat(null);
             }
+            // if (selectedUnassignedChat && !chats.some(chat => chat.chatId === selectedUnassignedChat.chatId)) {
+            //     setSelectedUnassignedChat(null);
+            // }
 
         } catch (err) {
             console.error("Error fetching unassigned chat list:", err);
@@ -229,6 +235,7 @@ const AssignChatsPage = () => {
                                         <label htmlFor="team-select" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#444' }}>Select Team:</label>
                                         <select
                                             id="team-select"
+                                            //value={selectedUnassignedChat.assignedTeamId??  selectedTeamId }
                                             value={selectedTeamId}
                                             onChange={(e) => {
                                                 setSelectedTeamId(e.target.value);
@@ -248,6 +255,7 @@ const AssignChatsPage = () => {
                                         <label htmlFor="agent-select" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#444' }}>Select Agent:</label>
                                         <select
                                             id="agent-select"
+                                            //value={selectedUnassignedChat.assignedAgentId?? selectedAgentId}
                                             value={selectedAgentId}
                                             onChange={(e) => setSelectedAgentId(e.target.value)}
                                             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid #ccc', appearance: 'none', background: 'white url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007bff%22%20d%3D%22M287%2069.9a17.6%2017.6%200%200%200-13%205.1L146.2%20208.5%2018.5%2075.1A17.6%2017.6%200%200%200%205.1%2062%2017.6%2017.6%200%200%200%200%2075.1l141.2%20140.7c6.7%206.7%2015.6%2010.5%2025.1%2010.5s18.4-3.8%2025.1-10.5L292.4%2075.1a17.6%2017.6%200%200%200-5.1-12.9z%22%2F%3E%3C%2Fsvg%3E") no-repeat right 0.75rem center', backgroundSize: '0.6em auto' }}

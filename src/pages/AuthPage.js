@@ -20,6 +20,9 @@ const AuthPage = () => {
     const [otpForReset, setOtpForReset] = useState('');
     const [otpSent, setOtpSent] = useState(false);
 
+    const [showRecoverTwoFactorFlow, setShowRecoverTwoFactorFlow] = useState(false);
+    const [recoveryCodeInput, setRecoveryCodeInput] = useState('');
+
     const {
         user,
         login,
@@ -34,7 +37,8 @@ const AuthPage = () => {
         isAuthenticated,
         checkUserByEmail,
         resetPassword,
-        forgotPasswordLoading
+        forgotPasswordLoading,
+        initiateTwoFactorRecovery
     } = useAuth();
 
     useEffect(() => {
@@ -87,7 +91,7 @@ const AuthPage = () => {
             return;
         }
 
-        const result = await completeForcedTwoFactorSetup(twoFactorCode, recoveryCode);
+        const result = await completeForcedTwoFactorSetup(twoFactorCode);
 
         if (result.success) {
             setTwoFactorCode('');
@@ -136,6 +140,26 @@ const AuthPage = () => {
             }, 1500); 
         } else {
             setTempMessage(result.message || "Password reset failed. Please check your OTP or try again.");
+        }
+    };
+
+    const handleRecoverTwoFactorSubmit = async (e) => {
+        e.preventDefault();
+        setTempMessage(null);
+
+        if (!userIdFor2FA) {
+            setTempMessage("User ID not available for 2FA recovery. Please try logging in again.");
+            return;
+        }
+
+        const result = await initiateTwoFactorRecovery(userIdFor2FA, recoveryCodeInput);
+
+        if (result.success) {
+            setTempMessage(result.message);
+            setRecoveryCodeInput(''); 
+            setShowRecoverTwoFactorFlow(false); 
+        } else {
+            setTempMessage(result.message || "2FA recovery failed. Please check your recovery code.");
         }
     };
 
@@ -286,10 +310,44 @@ const AuthPage = () => {
                 </form>
             );
         }
-    } else if (requiresTwoFactor) {
+    }
+    else if (showRecoverTwoFactorFlow) {
+        currentAuthStageUI = (
+            <form onSubmit={handleRecoverTwoFactorSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <h2 className='auth-title'>Recover Two-Factor Authentication</h2>
+                <p className='auth-infomessage'>Enter your recovery code to set up a new authenticator.</p>
+                <div>
+                    <label htmlFor="recoveryCodeInput" style={styles.label}>Recovery Code:</label>
+                    <input
+                        type="text"
+                        id="recoveryCodeInput"
+                        value={recoveryCodeInput}
+                        onChange={(e) => setRecoveryCodeInput(e.target.value)}
+                        placeholder="Enter your recovery code"
+                        style={styles.input}
+                        required
+                        disabled={loading}
+                    />
+                </div>
+                {(error || tempMessage) && <div style={styles.errorMessage} role="alert"><span>{error || tempMessage}</span></div>}
+                <button type="submit" className='auth-button' style={{ backgroundColor: loading ? '#a0c0e0' : '#007bff' }} disabled={loading}>
+                    {loading ? <FontAwesomeIcon icon={faSpinner} style={{ fontSize: '2rem', marginRight: '0.75rem' }} spin/> : 'Recover 2FA'}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => { setShowRecoverTwoFactorFlow(false); setTempMessage(null); setRecoveryCodeInput(''); }}
+                    className='auth-linkbutton'
+                    style={{ marginTop: '0.5rem' }}
+                >
+                    Back to 2FA Verification
+                </button>
+            </form>
+        );
+    }  
+    else if (requiresTwoFactor) {
         if (twoFactorEnabledForUser) {
             currentAuthStageUI = (
-                <form onSubmit={handleTwoFactorVerificationSubmit} style={styles.form}>
+                <form onSubmit={handleTwoFactorVerificationSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <h2 className='auth-title'>Two-Factor Authentication Required</h2>
                     <p className='auth-infomessage'>Please enter the 6-digit code from your authenticator app.</p>
                     <div>
@@ -321,14 +379,14 @@ const AuthPage = () => {
                     <button type="submit" className='auth-button' style={{ backgroundColor: loading ? '#a0c0e0' : '#007bff' }} disabled={loading}>
                         {loading ? <FontAwesomeIcon icon={faSpinner} style={{ fontSize: '2rem', marginRight: '0.75rem' }} spin/> : 'Verify and Login'}
                     </button>
-                    {/* <button
+                    <button
                         type="button"
-                        onClick={() => { handleReGenerateQrCode(); }}
+                        onClick={() => { setShowRecoverTwoFactorFlow(true); setTempMessage(null); setTwoFactorCode(''); }}
                         className='auth-linkbutton'
-                        style={{  marginTop: '1.5rem' }}
+                        style={{ marginTop: '1.5rem' }}
                     >
-                        Re-generate Qr code
-                    </button> */}
+                        Recover 2FA
+                    </button>
                 </form>
             );
         } else {
@@ -336,6 +394,7 @@ const AuthPage = () => {
                 <TwoFactorSetup
                     otpAuthUri={twoFactorSetupData?.otpAuthUri}
                     manualKey={twoFactorSetupData?.secretKey}
+                    recoveryCode={twoFactorSetupData?.recoveryCode}
                     onComplete={completeForcedTwoFactorSetup}
                 />
             );

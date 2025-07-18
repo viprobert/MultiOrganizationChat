@@ -53,9 +53,6 @@ const Sidebar = ({
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 display: 'flex',            
                 flexDirection: 'column',    
-                alignItems: 'center',       
-                justifyContent: 'center',   
-                textAlign: 'center'         
             }}>
                 <div style={{ marginBottom: '10px' }}>
                     <Link to="/profile" style={{ textDecoration: 'none', color: 'white' }}>

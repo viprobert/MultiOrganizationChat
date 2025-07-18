@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { loginApi, generateTwoFactorSetupApi, verifyTwoFactorSetupApi, disableTwoFactorApi, 
-        completeTwoFactorSetupApi, forgetPasswordApi  } from '../api/auth';
+        completeTwoFactorSetupApi, recoverTwoFactorApi,  forgetPasswordApi  } from '../api/auth';
 import { checkUserApi } from '../api/user';
 const AuthContext = createContext(null);
 
@@ -191,6 +191,30 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    const initiateTwoFactorRecovery = useCallback(async (userId, recoveryCode) => {
+        setLoading(true);
+        setError(null);
+        setTwoFactorSetupData(null);
+
+        try {
+            const response = await recoverTwoFactorApi(userId, recoveryCode); 
+
+            setRequiresTwoFactor(true);
+            setTwoFactorEnabledForUser(response.twoFactorEnabledForUser); 
+            setUserIdFor2FA(response.userId);
+            setTwoFactorSetupData(response.twoFactorSetupData);
+            
+            setLoading(false);
+            return { success: true, message: '2FA recovery successful. Please set up your new authenticator.' };
+        } catch (err) {
+            console.error("2FA recovery initiation error:", err);
+            const errorMessage = err.message || "Failed to initiate 2FA recovery. Please check your recovery code.";
+            setError(errorMessage);
+            setLoading(false);
+            return { success: false, message: errorMessage };
+        }
+    }, []);
+
     const contextValue = {
         user,
         isAuthenticated: !!user,
@@ -209,6 +233,7 @@ export const AuthProvider = ({ children }) => {
         checkUserByEmail,         
         resetPassword,            
         forgotPasswordLoading,
+        initiateTwoFactorRecovery,
     };
 
     return (

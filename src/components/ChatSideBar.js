@@ -73,10 +73,7 @@ const ChatSideBar = ({
                 borderRadius: '0 0 1rem 0',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 display: 'flex',            
-                flexDirection: 'column',    
-                alignItems: 'center',       
-                justifyContent: 'center',   
-                textAlign: 'center'         
+                flexDirection: 'column',           
             }}>
                 <div style={{ marginBottom: '10px' }}>
                     <Link to="/profile" style={{ textDecoration: 'none', color: 'white' }}>
