@@ -123,7 +123,7 @@ const AppContent = () => {
         element={
           <ProtectedRoute>
             <UserProfile />
-      </ProtectedRoute>
+          </ProtectedRoute>
         } 
       />
 

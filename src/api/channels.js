@@ -1,5 +1,4 @@
-import {API_BASE_URL as API_URL} from '../config/api';
-const API_BASE_URL = API_URL;
+import { API_BASE_URL } from '../config/api';
 
 export const getAllChannelsApi = async (orgId, token) => {
   try {

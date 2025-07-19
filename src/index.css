@@ -73,12 +73,12 @@ h3 {
 }
 
 .main-chat-content {
-flex-grow: 1;
-display: flex;
-background-color: #ffffff;
-box-shadow: -2px 0 5px rgba(0,0,0,0.1);
-margin-left: 1rem;
-height: 100%;
+    flex-grow: 1;
+    display: flex;
+    background-color: #ffffff;
+    box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+    margin-left: 1rem;
+    height: 100%;
 }
 
 .chat-list-section {
@@ -403,12 +403,12 @@ height: 100%;
 }
 
 /* 2FA */
-.tfa-container{
+.tfa-container {
     text-align: center;
-    padding: 2rem;
+    padding: 0 5px;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    max-width: 450px;
+    max-width: 500px;
     width: 100%;
     margin: 2rem auto;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
@@ -416,22 +416,22 @@ height: 100%;
     font-family: Inter, sans-serif;
 }
 
-.tfa-paragraph{
+.tfa-paragraph {
     font-size: 0.95rem;
     color: #666;
     margin-bottom: 1rem;
 }
-.tfa-qrcodewrapper{
+.tfa-qrcodewrapper {
     margin: 1.5rem 0;
     display: flex;
     justify-content: center;
 }
-.tfa-manualentry{
+.tfa-manualentry {
     font-size: 0.9rem;
     color: #555;
     margin-top: 1rem;
 }
-.tfa-manualentrykey{
+.tfa-manualentrykey {
     font-weight: bold;
     word-break: break-all;
     background-color: #f8f8f8;
@@ -440,15 +440,15 @@ height: 100%;
     margin: 0.5rem auto;
     display: inline-block;
 }
-.tfa-input{
-    width: calc(100% - 20px);
+.tfa-input {
+    width: calc(100% - 60px);
     padding: 0.8rem 10px;
     margin: 1rem 0;
     border-radius: 4px;
     border: 1px solid #ddd;
     font-size: 1rem;
 }
-.tfa-button{
+.tfa-button {
     padding: 0.75rem 1.5rem;
     background-color: #007bff;
     color: #fff;
@@ -457,9 +457,9 @@ height: 100%;
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s ease;
-    width: 100%;
+    width: 90%;
 }
-.tfa-message{
+.tfa-message {
     margin-top: 1rem;
     padding: 0.7rem;
     border-radius: 4px;
@@ -467,7 +467,7 @@ height: 100%;
 }
 
 /* Auth Page */
-.auth-container{
+.auth-container {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -476,7 +476,7 @@ height: 100%;
     padding: 1rem;
     font-family: Inter, sans-serif;
 }
-.auth-card{
+.auth-card {
     background-color: #fff;
     border-radius: 1rem;
     box-shadow: 0 10px 15px rgba(0,0,0,0.1);
@@ -485,7 +485,7 @@ height: 100%;
     width: 100%;
     box-sizing: border-box;
 }
-.auth-title{
+.auth-title {
     font-size: 1.875rem;
     font-weight: bold;
     text-align: center;
@@ -495,7 +495,7 @@ height: 100%;
     align-items: center;
     justify-content: center;
 }
-.auth-submitbutton{
+/* .auth-submitbutton {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -510,8 +510,8 @@ height: 100%;
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease, tranform 0.2s ease;
-}
-.auth-button{
+} */
+.auth-button {
     width: 100%;
     display: flex;
     justify-content: center;
@@ -528,7 +528,7 @@ height: 100%;
     transition: background-color 0.2s ease, tranform 0.2s ease;
     margin-top: 2rem;
 }
-.auth-linkbutton{
+.auth-linkbutton {
     background: none;
     border: none;
     padding: 0;
@@ -538,7 +538,7 @@ height: 100%;
     cursor: pointer;
     font-size: 0.9rem;
 }
-.auth-errormessage{
+/* .auth-errormessage {
     background-color: #ffe0e0;
     border: 1px solid #ffb3b3;
     color: #cc0000;
@@ -546,8 +546,8 @@ height: 100%;
     margin-top: 1rem;
     border-radius: 0.5rem;
     font-size: 0.0875rem;
-}
-.auth-infomessage{
+} */
+.auth-infomessage {
     font-size: 0.9rem;
     color: #666;
     text-align: center;
@@ -574,11 +574,11 @@ height: 100%;
     margin-bottom: 20px;
 }
 
-.user-profile-section-title {
+/* .user-profile-section-title {
     font-size: 20px;
     font-weight: bold;
     margin-bottom: 15px;
-}
+} */
 
 .user-profile-row {
     margin-bottom: 15px;
@@ -625,7 +625,7 @@ height: 100%;
     background-color: #6c757d;
 }
 
-.user-profile-message-success {
+/* .user-profile-message-success {
     color: green;
     margin-top: 10px;
     text-align: center;
@@ -635,13 +635,14 @@ height: 100%;
     color: red;
     margin-top: 10px;
     text-align: center;
-}
+} */
+ 
 .error-text {
     color: red;
     text-align: center;
     margin-top: 20px;
 }
-.success-text{
+.success-text {
     color: green;
     text-align: center;
     margin-top: 20px;

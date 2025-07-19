@@ -24,7 +24,7 @@ const truncateText = (text, maxLength) => {
     };
 
 const getLatestMessagePreview = (message) => {
-    if (message.messageType === "text"){
+    if (message?.messageType === "text"){
      return(
         truncateText(message.content, 60)
       )
@@ -50,7 +50,7 @@ const getLatestMessagePreview = (message) => {
       </div>
       )
     }
-    else if (message.messageType === "document"){
+    else if (message.messageType === "file"){
       return(
       <div sx={{ display: 'flex', alignItems: 'center' }}>
          <FontAwesomeIcon icon={faFile} sx={{ mr: 0.5 }} /> Document

@@ -99,7 +99,7 @@ const ChatSideBar = ({
                         disabled={isActionPanelLoading}
                     >
                         <span style={{ width: '0.625rem', height: '0.625rem', borderRadius: '50%', marginRight: '0.5rem', backgroundColor: statusColor }}></span>
-                        {isActionPanelLoading ? 'Updating...' : statusText}
+                        {statusText}
                     </button>
                 </div>
             </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import * as signalR from '@microsoft/signalr'; 
-import {API_BASE_URL as API_URL} from '../config/api';
-const SIGNALR_HUB_URL = `${API_URL.replace('/api','')}/chatHub`;
+import { API_BASE_URL } from '../config/api';
+const SIGNALR_HUB_URL = `${API_BASE_URL.replace('/api','')}/chatHub`;
 
 export const useSignalR = (userId, token, onReceiveMessage, onChatUpdated) => {
   const [isConnected, setIsConnected] = useState(false);

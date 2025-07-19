@@ -24,7 +24,8 @@ const ChatList = ({
             setFilteredChats([]); 
             return;
         }
-        const orgFiltered = chatList.filter(chat => chat.orgId === user.orgId);
+        const firstFilter = chatList.filter(chat => chat.chatMessage !== null);
+        const orgFiltered = firstFilter.filter(chat => chat.orgId === user.orgId);
         setFilteredChats(orgFiltered);
 
         if (searchTerm) {
