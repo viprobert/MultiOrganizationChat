@@ -321,7 +321,7 @@ const ChatPage = () => {
 
                 const chatInList = chatListRef.current.find(c => c.chatId === chat.chatId);
                 if (chatInList?.unreadCount > 0) {
-                    await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.[0]?.id || null, user.token);
+                    await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.id || null, user.token);
 
                     setChatList(prevChats => prevChats.map(c =>
                         c.chatId === chat.chatId ? { ...c, unreadCount: 0 } : c
