@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllTeamsApi, createTeamApi, getTeamByIdApi, updateTeamApi, deleteTeamApi } from '../api/teams';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,12 +34,15 @@ const TeamsPage = () => {
     const canDeleteTeam = user?.permissions?.includes('teams_delete');
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -49,30 +52,37 @@ const TeamsPage = () => {
         }
     };
 
-    const fetchTeams = async () => {
-        if (authLoading || !user?.token) return;
+    const fetchTeams = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedTeams = await getAllTeamsApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
+            const fetchedTeams = await getAllTeamsApi(user?.isSuperAdmin ? null : user?.orgId);
             setTeams(fetchedTeams);
         } catch (err) {
             console.error("Error fetching teams:", err);
             setError("Failed to load teams: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     const fetchDropdownData = async () => {
-        if (authLoading || !user?.token) { 
+        if (!user) {
+            setLoading(false);
             return;
         }
         let orgs = [];
         try {
             if (user?.isSuperAdmin){
-                orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token); 
+                orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId); 
                 setAllOrganizations(orgs);
                 }
         } catch (err) {
@@ -100,7 +110,7 @@ const TeamsPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const teamData = await getTeamByIdApi(teamId, user.token);
+            const teamData = await getTeamByIdApi(teamId);
             if (teamData) {
                 setEditingTeam(teamData);
                 setTeamForm({
@@ -163,7 +173,7 @@ const TeamsPage = () => {
                     organizationId: editingTeam.organizationId, 
                     name: teamForm.name,
                     description: teamForm.description
-                }, user.token);
+                });
                 alert('Team updated successfully!');
             } else {
                 const organizationId = user?.isSuperAdmin ? teamForm.organizationId : user.orgId;
@@ -171,7 +181,7 @@ const TeamsPage = () => {
                     orgId: organizationId,
                     name: teamForm.name,
                     description: teamForm.description
-                }, user.token);
+                });
                 alert('Team created successfully!');
             }
             setIsModalOpen(false); 
@@ -197,7 +207,7 @@ const TeamsPage = () => {
         setShowDeleteConfirm(false); 
 
         try {
-            await deleteTeamApi(teamToDelete.id, user.token);
+            await deleteTeamApi(teamToDelete.id);
             alert(`Team "${teamToDelete.name}" deleted successfully!`);
             fetchTeams();
         } catch (err) {

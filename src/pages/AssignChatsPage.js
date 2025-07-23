@@ -46,12 +46,14 @@ const AssignChatsPage = () => {
 
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -62,8 +64,7 @@ const AssignChatsPage = () => {
     };
 
     const fetchUnassignedChats = useCallback(async (pageToFetch = 1, resetList = false) => {
-        if (!user?.token) {
-            console.warn("Missing user orgId or token for fetching unassigned chat list.");
+        if (!user) {
             return;
         }
 
@@ -71,7 +72,7 @@ const AssignChatsPage = () => {
         setChatError(null);
 
         try {
-            const chats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId,  user.token);
+            const chats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId);
 
             const strictlyUnassignedChats = chats.filter(chat =>
                 chat.assignedAgentId === null || chat.acceptAssigned === false
@@ -99,14 +100,16 @@ const AssignChatsPage = () => {
         } catch (err) {
             console.error("Error fetching unassigned chat list:", err);
             setChatError("Failed to load unassigned chats. " + (err.message || "Please try again."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoadingChats(false);
         }
-    }, [user, selectedUnassignedChat]);
+    }, [user, selectedUnassignedChat, logout]);
 
     const fetchTeamsAndAgents = useCallback(async () => {
-        if (!user?.orgId || !user?.token) {
-            console.warn("Missing user orgId or token for fetching teams and agents.");
+        if (!user) {
             return;
         }
 
@@ -114,19 +117,24 @@ const AssignChatsPage = () => {
         setTeamsError(null);
 
         try {
-            const data = await getTeamsAndAgentsApi(user.orgId, user.token);
+            const data = await getTeamsAndAgentsApi(user.orgId);
             setTeams(data || []);
         } catch (err) {
             console.error("Error fetching teams and agents:", err);
             setTeamsError("Failed to load teams and agents. " + (err.message || "Please try again."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoadingTeams(false);
         }
-    }, [user]);
+    }, [user, logout]);
 
     useEffect(() => {
-        fetchUnassignedChats(1, true);
-        fetchTeamsAndAgents();
+        if(user){
+            fetchUnassignedChats(1, true);
+            fetchTeamsAndAgents();
+        }
     }, [fetchUnassignedChats, fetchTeamsAndAgents]);
 
     const getAgentsForSelectedTeam = useCallback(() => {
@@ -143,8 +151,8 @@ const AssignChatsPage = () => {
         setAssignError(null);
     };
 
-    const handleAssignChat = async () => {
-        if (!selectedUnassignedChat || !selectedAgentId || !user?.orgId || !user?.token) {
+    const handleAssignChat = useCallback(async () => {
+        if (!selectedUnassignedChat || !selectedAgentId || !user?.orgId) {
             setAssignError("Please select a chat and an agent to assign.");
             return;
         }
@@ -154,7 +162,7 @@ const AssignChatsPage = () => {
         setAssignError(null);
 
         try {
-            await AssignMessageApi(user.orgId, selectedUnassignedChat.chatId, selectedAgentId, user.token);
+            await AssignMessageApi(user.orgId, selectedUnassignedChat.chatId, selectedAgentId);
             setAssignSuccess(true);
             setSelectedUnassignedChat(null);
             setSelectedAgentId('');
@@ -163,10 +171,13 @@ const AssignChatsPage = () => {
         } catch (err) {
             console.error("Error assigning chat:", err);
             setAssignError("Failed to assign chat: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setAssigning(false);
         }
-    };
+    }, [user, logout]);
 
     return (
         <div style={{ display: 'flex', height: '100vh', backgroundColor: '#f5f7fa' }}>

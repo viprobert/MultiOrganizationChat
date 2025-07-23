@@ -1,11 +1,11 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getAllChannelsApi = async (orgId, token) => {
+export const getAllChannelsApi = async (orgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Setting/GetAllChannel?organizationId=${orgId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Setting/GetAllChannel?organizationId=${orgId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -24,12 +24,11 @@ export const getAllChannelsApi = async (orgId, token) => {
   }
 };
 
-export const createChannelApi = async (channelData, token) => {
+export const createChannelApi = async (channelData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Setting/CreateChannel`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Setting/CreateChannel`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -41,7 +40,6 @@ export const createChannelApi = async (channelData, token) => {
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
      const data = await response.json();
-    // return data;
     return { success: true, message: data.data.message };
   } catch (error) {
     console.error("Error creating channel:", error);
@@ -49,12 +47,11 @@ export const createChannelApi = async (channelData, token) => {
   }
 };
 
-export const getChannelByIdApi = async (id, token) => {
+export const getChannelByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Setting/GetChannelById?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Setting/GetChannelById?id=${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -73,12 +70,11 @@ export const getChannelByIdApi = async (id, token) => {
   }
 };
 
-export const updateChannelApi = async (channelData, token) => {
+export const updateChannelApi = async (channelData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Setting/UpdateChannel`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Setting/UpdateChannel`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -97,12 +93,11 @@ export const updateChannelApi = async (channelData, token) => {
   }
 };
 
-export const deleteChannelApi = async (id, token) => {
+export const deleteChannelApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Setting/DeleteChannel?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Setting/DeleteChannel?id=${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

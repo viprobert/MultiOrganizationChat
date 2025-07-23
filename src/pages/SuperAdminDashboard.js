@@ -44,12 +44,15 @@ const SuperAdminDashboardPage = () => {
     const [orgId, setOrgId] = useState('');
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -60,11 +63,12 @@ const SuperAdminDashboardPage = () => {
     };
 
     const fetchDropdownData = async () => {
-        if (!user?.token) {
+        if (!user) {
+            setLoading(false);
             return;
         }
         try {
-            const orgs = await getAllOrganizationsApi(null, user.token);
+            const orgs = await getAllOrganizationsApi(null);
             setAllOrganizations(orgs);
         } catch (err) {
             console.error("Error fetching organizations:", err);
@@ -75,8 +79,7 @@ const SuperAdminDashboardPage = () => {
     };
 
     const fetchSuperAdminReports = useCallback(async (currentStartDate, currentEndDate, currentOrgId) => {
-        if (!user.token) {
-            setError("Authentication token is missing. Please ensure you are logged in.");
+        if (!user) {
             setLoading(false);
             return;
         }
@@ -85,7 +88,7 @@ const SuperAdminDashboardPage = () => {
         setError(null);
 
         try {
-            const response = await getSuperAdminReportAPI(currentStartDate, currentEndDate, currentOrgId, user?.token);
+            const response = await getSuperAdminReportAPI(currentStartDate, currentEndDate, currentOrgId);
 
             if (response.success && response.data && response.data.orgsData) {
                 const processedOrgsData = response.data.orgsData.map(org => {
@@ -125,14 +128,19 @@ const SuperAdminDashboardPage = () => {
         } catch (err) {
             console.error("Error fetching super admin reports:", err);
             setError(`Failed to load reports: ${err.message || "Unknown error."}`);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    }, [user.token]); 
+    }, [user, logout]); 
 
     useEffect(() => {
-        fetchDropdownData();
-        fetchSuperAdminReports(startDate, endDate, orgId);
+        if (user){
+            fetchDropdownData();
+            fetchSuperAdminReports(startDate, endDate, orgId);
+        }
     }, [fetchSuperAdminReports, startDate, endDate, orgId]);
 
     const mainContentStyle = {

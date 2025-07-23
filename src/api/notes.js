@@ -1,12 +1,12 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const setUserNoteApi = async (orgId, chatId, note, token) => {
+export const setUserNoteApi = async (orgId, chatId, note) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/SetUserNote`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/SetUserNote`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, note }),

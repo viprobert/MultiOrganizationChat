@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext'; 
 import { getUserByIdApi, updateProfileApi , changeAgentStatusApi } from '../api/user'; 
 import { changePasswordAPI } from '../api/auth';
@@ -26,12 +26,15 @@ const UserProfile = () => {
     const [isActionPanelLoading, setIsActionPanelLoading] = useState(false);
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -43,13 +46,13 @@ const UserProfile = () => {
     
     useEffect(() => {
         const fetchUserData = async () => {
-            if (!user?.userId || !user?.token) {
-                setError("User ID or token not available.");
+            if (!user?.userId) {
+                setError("User Id not available.");
                 setLoading(false);
                 return;
             }
             try {
-                const data = await getUserByIdApi(user.userId, user.token);
+                const data = await getUserByIdApi(user.userId);
                 setUserProfile(data);
                 setEditableUsername(data.username);
                 setEditableEmail(data.email);
@@ -61,10 +64,13 @@ const UserProfile = () => {
         };
 
         fetchUserData();
-    }, [user?.userId, user?.token]);
+    }, [user?.userId]);
 
-    const handleUpdateProfile = async () => {
-        if (!user?.userId || !user?.token) return;
+    const handleUpdateProfile = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         const payload = {
             orgId: userProfile.orgId,
@@ -74,16 +80,19 @@ const UserProfile = () => {
         };
 
         try {
-            await updateProfileApi(payload, user.token);
+            await updateProfileApi(payload);
             setUserProfile(prev => ({ ...prev, username: editableUsername, email: editableEmail }));
             setIsEditingProfile(false);
             alert("Profile updated successfully!");
         } catch (err) {
             alert(`Error: ${err.message || "Failed to update profile."}`);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         }
-    };
+    }, [user, logout]);
 
-    const handleChangePassword = async () => {
+    const handleChangePassword = useCallback(async () => {
         setPasswordMessage('');
         if (!oldPassword || !newPassword || !confirmPassword) {
             setPasswordMessage("All password fields are required.");
@@ -103,7 +112,7 @@ const UserProfile = () => {
                 userId: user.userId,
                 oldpassword: oldPassword,
                 password: newPassword
-            }, user.token);
+            });
 
             setOldPassword('');
             setNewPassword('');
@@ -112,8 +121,12 @@ const UserProfile = () => {
             setPasswordMessage("Password changed successfully!");
         } catch (err) {
             setPasswordMessage(`Error: ${err.message || "Failed to change password."}`);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
+
         }
-    };
+    }, [user, logout]);
 
     if (loading) return <div style={{ textAlign: 'center' }}>Loading profile...</div>;
     if (error) return <div className='error-text'>{error}</div>;

@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getAllOrganizationsApi = async (orgId,token) => {
+export const getAllOrganizationsApi = async (orgId) => {
    let url = `${API_BASE_URL}/Organization`;
   const queryParams = new URLSearchParams();
 
@@ -12,10 +13,9 @@ export const getAllOrganizationsApi = async (orgId,token) => {
   }
 
   try {
-    const response = await fetch(`${url}`, {
+    const response = await fetchWithAuth(`${url}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -34,12 +34,11 @@ export const getAllOrganizationsApi = async (orgId,token) => {
   }
 };
 
-export const createOrganizationApi = async (orgData, token) => {
+export const createOrganizationApi = async (orgData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Organization`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Organization`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -59,12 +58,11 @@ export const createOrganizationApi = async (orgData, token) => {
   }
 };
 
-export const getOrganizationByIdApi = async (id, token) => {
+export const getOrganizationByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Organization/GetById?id=${id}`, { 
+    const response = await fetchWithAuth(`${API_BASE_URL}/Organization/GetById?id=${id}`, { 
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -83,12 +81,11 @@ export const getOrganizationByIdApi = async (id, token) => {
   }
 };
 
-export const updateOrganizationApi = async (orgData, token) => {
+export const updateOrganizationApi = async (orgData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Organization`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Organization`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -106,12 +103,11 @@ export const updateOrganizationApi = async (orgData, token) => {
   }
 };
 
-export const deleteOrganizationApi = async (id, token) => {
+export const deleteOrganizationApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Organization?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Organization?id=${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

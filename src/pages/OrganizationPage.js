@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllOrganizationsApi, createOrganizationApi, getOrganizationByIdApi, updateOrganizationApi, deleteOrganizationApi } from '../api/organization';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -43,12 +43,15 @@ const OrganizationPage = () => {
     const canDeleteOrg = user?.permissions?.includes('organization_delete');
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -58,24 +61,32 @@ const OrganizationPage = () => {
         }
     };
 
-    const fetchOrganizations = async () => {
-        if (authLoading || !user?.token) return;
+    const fetchOrganizations = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedorganizations = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
+            const fetchedorganizations = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId);
             setOrganizations(fetchedorganizations);
         } catch (err) {
             console.error("Error fetching organizations:", err);
             setError("Failed to load organizations: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     useEffect(() => {
+        if (user){
         fetchOrganizations();
+        }
     }, [user, authLoading]);
 
     const handleAddOrgClick = () => {
@@ -89,7 +100,7 @@ const OrganizationPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const orgData = await getOrganizationByIdApi(orgId, user.token);
+            const orgData = await getOrganizationByIdApi(orgId);
             if (orgData) {
                 setEditingOrganization(orgData);
                 setOrganizationForm({
@@ -158,7 +169,7 @@ const OrganizationPage = () => {
                     maxChannelCount: organizationForm.maxChannelCount,
                     startHour: organizationForm.startHour,
                     endHour: organizationForm.endHour
-                }, user.token);
+                });
                 alert('Organization updated successfully!');
             } else {
                 await createOrganizationApi({
@@ -168,7 +179,7 @@ const OrganizationPage = () => {
                     maxChannelCount: organizationForm.maxChannelCount,
                     startHour: organizationForm.startHour,
                     endHour: organizationForm.endHour
-                }, user.token);
+                });
                 alert('Organization created successfully!');
             }
             setIsModalOpen(false); 
@@ -194,7 +205,7 @@ const OrganizationPage = () => {
         setShowDeleteConfirm(false);
 
         try {
-            await deleteOrganizationApi(organizationToDelete.id, user.token);
+            await deleteOrganizationApi(organizationToDelete.id);
             alert(`Organization "${organizationToDelete.name}" deleted successfully!`);
             fetchOrganizations();
         } catch (err) {

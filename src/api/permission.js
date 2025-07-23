@@ -1,11 +1,11 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getAllPermissionsApi = async (token) => {
+export const getAllPermissionsApi = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Permission`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Permission`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -24,12 +24,11 @@ export const getAllPermissionsApi = async (token) => {
   }
 };
 
-export const getPermissionToAssignApi = async (token) => {
+export const getPermissionToAssignApi = async () => {
   try{
-    const response = await fetch(`${API_BASE_URL}/Permission/PermsToAssign`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Permission/PermsToAssign`, {
       method: 'Get',
-      headers: {
-         'Authorization': `Bearer ${token}`, 
+      headers: { 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       }
@@ -48,12 +47,11 @@ export const getPermissionToAssignApi = async (token) => {
   }
 };
 
-export const createPermissionApi = async (permData, token) => {
+export const createPermissionApi = async (permData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Permission`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Permission`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -73,12 +71,11 @@ export const createPermissionApi = async (permData, token) => {
   }
 };
 
-export const getPermissionByIdApi = async (id, token) => {
+export const getPermissionByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Permission/GetById?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Permission/GetById?id=${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -97,12 +94,11 @@ export const getPermissionByIdApi = async (id, token) => {
   }
 };
 
-export const updatePermissionApi = async (permData, token) => {
+export const updatePermissionApi = async (permData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Permission`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Permission`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -121,12 +117,11 @@ export const updatePermissionApi = async (permData, token) => {
   }
 };
 
-export const deletePermissionApi = async (id, token) => {
+export const deletePermissionApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Permission?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Permission?id=${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

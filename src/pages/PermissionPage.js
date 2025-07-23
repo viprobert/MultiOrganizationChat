@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllPermissionsApi, createPermissionApi, getPermissionByIdApi, updatePermissionApi, deletePermissionApi } from '../api/permission';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -31,12 +31,15 @@ const PermissionPage = () => {
 
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -46,24 +49,32 @@ const PermissionPage = () => {
         }
     };
     
-    const fetchPerms = async () => {
-        if (authLoading || !user?.token) return;
+    const fetchPerms = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedPerms = await getAllPermissionsApi(user.token);
+            const fetchedPerms = await getAllPermissionsApi();
             setPerms(fetchedPerms);
         } catch (err) {
             console.error("Error fetching permissions:", err);
             setError("Failed to load permissions: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     useEffect(() => {
-        fetchPerms();
+        if (user){
+            fetchPerms();
+        }
     }, [user, authLoading]); 
 
     const handleAddPermClick = () => {
@@ -77,7 +88,7 @@ const PermissionPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const permData = await getPermissionByIdApi(permId, user.token);
+            const permData = await getPermissionByIdApi(permId);
             if (permData) {
                 setEditingPerm(permData);
                 setPermForm({
@@ -121,13 +132,13 @@ const PermissionPage = () => {
                     id: editingPerm.id,
                     name: permForm.name,
                     description: permForm.description
-                }, user.token);
+                });
                 alert('Permission updated successfully!');
             } else {
                 await createPermissionApi({
                     name: permForm.name,
                     description: permForm.description
-                }, user.token);
+                });
                 alert('Permission created successfully!');
             }
             setIsModalOpen(false); 
@@ -153,7 +164,7 @@ const PermissionPage = () => {
         setShowDeleteConfirm(false); 
 
         try {
-            await deletePermissionApi(permToDelete.id, user.token);
+            await deletePermissionApi(permToDelete.id);
             alert(`Permission "${permToDelete.name}" deleted successfully!`);
             fetchPerms();
         } catch (err) {

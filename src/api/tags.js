@@ -1,11 +1,11 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getChatsByTagApi = async (orgId, userId, token) => {
+export const getChatsByTagApi = async (orgId, userId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatsByTag?orgId=${orgId}&agentId=${userId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetChatsByTag?orgId=${orgId}&agentId=${userId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -24,12 +24,11 @@ export const getChatsByTagApi = async (orgId, userId, token) => {
   }
 };
 
-export const getAllTagsApi = async (orgId, token) => {
+export const getAllTagsApi = async (orgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging?orgId=${orgId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Tagging?orgId=${orgId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -48,13 +47,12 @@ export const getAllTagsApi = async (orgId, token) => {
   }
 };
 
-export const setUserTaggingApi = async (orgId, chatId, tagId, token) => {
+export const setUserTaggingApi = async (orgId, chatId, tagId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/SetUserTagging`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/SetUserTagging`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, tagId }),
@@ -72,13 +70,12 @@ export const setUserTaggingApi = async (orgId, chatId, tagId, token) => {
   }
 };
 
-export const removeTagFromUserApi = async (orgId, chatId, tagId, token) => {
+export const removeTagFromUserApi = async (orgId, chatId, tagId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/RemoveTagFromUser`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/RemoveTagFromUser`, {
       method: 'POST', 
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, tagId }),
@@ -96,12 +93,11 @@ export const removeTagFromUserApi = async (orgId, chatId, tagId, token) => {
   }
 };
 
-export const createTagApi = async (tagData, token) => {
+export const createTagApi = async (tagData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Tagging`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -121,12 +117,11 @@ export const createTagApi = async (tagData, token) => {
   }
 };
 
-export const getTagByIdApi = async (id, token) => {
+export const getTagByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging/GetById?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Tagging/GetById?id=${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -145,12 +140,11 @@ export const getTagByIdApi = async (id, token) => {
   }
 };
 
-export const updateTagApi = async (tagData, token) => {
+export const updateTagApi = async (tagData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Tagging`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -169,12 +163,11 @@ export const updateTagApi = async (tagData, token) => {
   }
 };
 
-export const deleteTagApi = async (id, orgId, token) => {
+export const deleteTagApi = async (id, orgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Tagging?id=${id}&orgId=${orgId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Tagging?id=${id}&orgId=${orgId}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

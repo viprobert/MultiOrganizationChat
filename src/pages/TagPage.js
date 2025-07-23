@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllTagsApi, createTagApi, getTagByIdApi, updateTagApi, deleteTagApi } from '../api/tags';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,12 +30,15 @@ const TagPage = () => {
     const canDeleteTag = user?.permissions?.includes('tags_delete');
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            setLoading(false);
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             setActionPanelError("Failed to change status: " + (err.message || "Unknown error."));
@@ -44,21 +47,27 @@ const TagPage = () => {
         }
     };
 
-    const fetchTags = async () => {
-        if (authLoading || !user?.token) return;
+    const fetchTags = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedTags = await getAllTagsApi(user.orgId,user.token);
+            const fetchedTags = await getAllTagsApi(user.orgId);
             setTags(fetchedTags);
         } catch (err) {
             console.error("Error fetching tags:", err);
             setError("Failed to load tags: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     useEffect(() => {
         fetchTags();
@@ -75,7 +84,7 @@ const TagPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const tagData = await getTagByIdApi(tagId, user.token);
+            const tagData = await getTagByIdApi(tagId);
             if (tagData) {
                 setEditingTag(tagData);
                 setTagForm({
@@ -121,14 +130,14 @@ const TagPage = () => {
                     orgId: user.orgId, 
                     name: tagForm.name,
                     description: tagForm.description
-                }, user.token);
+                });
                 alert('Tag updated successfully!');
             } else {
                 await createTagApi({
                     orgId: user.orgId,
                     name: tagForm.name,
                     description: tagForm.description
-                }, user.token);
+                });
                 alert('Tag created successfully!');
             }
             setIsModalOpen(false); 
@@ -154,7 +163,7 @@ const TagPage = () => {
         setShowDeleteConfirm(false); 
 
         try {
-            await deleteTagApi(tagToDelete.id, user.orgId, user.token);
+            await deleteTagApi(tagToDelete.id, user.orgId);
             alert(`Tag "${tagToDelete.name}" deleted successfully!`);
             fetchTags();
         } catch (err) {

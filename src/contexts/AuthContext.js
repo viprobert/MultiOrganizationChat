@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { loginApi, generateTwoFactorSetupApi, verifyTwoFactorSetupApi, disableTwoFactorApi, 
-        completeTwoFactorSetupApi, recoverTwoFactorApi,  forgetPasswordApi  } from '../api/auth';
+import { loginApi, completeTwoFactorSetupApi, recoverTwoFactorApi,  forgetPasswordApi, setAccessToken, clearAuthTokens, setRefreshToken  } from '../api/auth';
 import { checkUserApi } from '../api/user';
 const AuthContext = createContext(null);
 
@@ -12,9 +11,19 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(() => {
         try {
             const storedUser = sessionStorage.getItem('user');
-            return storedUser ? JSON.parse(storedUser) : null;
+            const parsedUser = storedUser ? JSON.parse(storedUser) : null;
+
+            if (parsedUser && parsedUser.token){
+                setAccessToken(parsedUser.token);
+            }
+            else{
+                clearAuthTokens();
+            }
+            return parsedUser;
         } catch (error) {
             console.error("Failed to parse user from session storage:", error);
+            clearAuthTokens();
+            sessionStorage.removeItem('user');
             return null;
         }
     });
@@ -24,9 +33,22 @@ export const AuthProvider = ({ children }) => {
     const [twoFactorEnabledForUser, setTwoFactorEnabledForUser] = useState(false);
     const [twoFactorSetupData, setTwoFactorSetupData] = useState(null);
     const [userIdFor2FA, setUserIdFor2FA] = useState(null);
+    const [refToken, setRefToken]= useState(null);
 
     const [forgotPasswordLoading, setForgotPasswordLoading] = useState(false);
     const [forgotPasswordError, setForgotPasswordError] = useState(null);
+
+    useEffect(() => {
+        if (user && user.token) {
+            setAccessToken(user.token);
+        } else {
+            clearAuthTokens();
+        }
+    }, [user]);
+
+    useEffect(() => {
+        setRefreshToken(refToken);
+    }, [refToken]);
 
     const login = useCallback(async (username, password, twoFactorCode = null, recoveryCode = null) => {
         setLoading(true);
@@ -35,10 +57,7 @@ export const AuthProvider = ({ children }) => {
 
         try {
             const response = await loginApi(username, password, twoFactorCode, recoveryCode);
-            if (response.code === 400){
-                setLoading(false);
-                setError(response.message);
-            }
+
             if (response.requiresTwoFactor) {
                 setRequiresTwoFactor(true);
                 setTwoFactorEnabledForUser(response.twoFactorEnabledForUser);
@@ -88,6 +107,8 @@ export const AuthProvider = ({ children }) => {
             };
             setUser(userData);
             sessionStorage.setItem('user', JSON.stringify(userData));
+            setAccessToken(userData.token);
+            setRefToken(data.refreshToken);
 
             setRequiresTwoFactor(false);
             setTwoFactorEnabledForUser(false);
@@ -108,56 +129,12 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         setUser(null);
         sessionStorage.removeItem('user');
+        clearAuthTokens();
         setRequiresTwoFactor(false);
         setTwoFactorEnabledForUser(false);
         setTwoFactorSetupData(null);
         setUserIdFor2FA(null);
     }, []);
-
-    const generateTwoFactorSetup = useCallback(async () => {
-        setLoading(true);
-        setError(null);
-        try {
-            //if (!user?.token) throw new Error("Not authenticated.");
-            const data = await generateTwoFactorSetupApi(userIdFor2FA);
-            setLoading(false);
-            return { success: true, data };
-        } catch (err) {
-            setError(err.message || "Failed to generate 2FA setup data.");
-            setLoading(false);
-            return { success: false, message: err.message };
-        }
-    }, [user?.token]);
-
-    const verifyTwoFactorSetup = useCallback(async (code) => {
-        setLoading(true);
-        setError(null);
-        try {
-            if (!user?.token) throw new Error("Not authenticated.");
-            const data = await verifyTwoFactorSetupApi(user.userId, code, user.token);
-            setLoading(false);
-            return { success: true, data };
-        } catch (err) {
-            setError(err.message || "Failed to verify 2FA setup.");
-            setLoading(false);
-            return { success: false, message: err.message };
-        }
-    }, [user?.token, user?.userId]);
-
-    const disableTwoFactor = useCallback(async (code) => {
-        setLoading(true);
-        setError(null);
-        try {
-            if (!user?.token) throw new Error("Not authenticated.");
-            const data = await disableTwoFactorApi(user.userId, code, user.token);
-            setLoading(false);
-            return { success: true, data };
-        } catch (err) {
-            setError(err.message || "Failed to disable 2FA.");
-            setLoading(false);
-            return { success: false, message: err.message };
-        }
-    }, [user?.token]);
 
     const checkUserByEmail = useCallback(async (email) => {
         setForgotPasswordLoading(true);
@@ -199,11 +176,28 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await recoverTwoFactorApi(userId, recoveryCode); 
 
+            const userData = {
+                userId: response.userId,
+                userName: response.userName,
+                orgId: response.orgId,
+                orgName: response.orgName,
+                roleName: response.roleName,
+                isOnline: response.isOnline,
+                teamId: response.teamId,
+                token: response.token,
+                permissions: response.permissions,
+                isSuperAdmin: response.isSuperAdmin
+            };
+
             setRequiresTwoFactor(true);
             setTwoFactorEnabledForUser(response.twoFactorEnabledForUser); 
             setUserIdFor2FA(response.userId);
             setTwoFactorSetupData(response.twoFactorSetupData);
-            
+
+            setUser(userData);
+            sessionStorage.setItem('user', JSON.stringify(userData));
+            setAccessToken(userData.token);
+            setRefToken(response.refreshToken);
             setLoading(false);
             return { success: true, message: '2FA recovery successful. Please set up your new authenticator.' };
         } catch (err) {
@@ -227,9 +221,6 @@ export const AuthProvider = ({ children }) => {
         twoFactorSetupData,
         userIdFor2FA,
         completeForcedTwoFactorSetup,
-        generateTwoFactorSetup,
-        verifyTwoFactorSetup,
-        disableTwoFactor,
         checkUserByEmail,         
         resetPassword,            
         forgotPasswordLoading,

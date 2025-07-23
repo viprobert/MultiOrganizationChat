@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getAllUserRolesApi = async (orgId, token) => {
+export const getAllUserRolesApi = async (orgId) => {
   let url = `${API_BASE_URL}/UserRole`;
   const queryParams = new URLSearchParams();
 
@@ -11,10 +12,9 @@ export const getAllUserRolesApi = async (orgId, token) => {
         url += `?${queryParams.toString()}`;
   }
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -33,12 +33,11 @@ export const getAllUserRolesApi = async (orgId, token) => {
   }
 };
 
-export const createUserRoleApi = async (roleData, token) => {
+export const createUserRoleApi = async (roleData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/UserRole`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/UserRole`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -58,12 +57,11 @@ export const createUserRoleApi = async (roleData, token) => {
   }
 };
 
-export const getUserRoleByIdApi = async (id, token) => {
+export const getUserRoleByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/UserRole/GetById?id=${id}`, { 
+    const response = await fetchWithAuth(`${API_BASE_URL}/UserRole/GetById?id=${id}`, { 
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -82,12 +80,11 @@ export const getUserRoleByIdApi = async (id, token) => {
   }
 };
 
-export const updateUserRoleApi = async (roleData, token) => {
+export const updateUserRoleApi = async (roleData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/UserRole`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/UserRole`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -107,12 +104,11 @@ export const updateUserRoleApi = async (roleData, token) => {
   }
 };
 
-export const deleteUserRoleApi = async (id, token) => {
+export const deleteUserRoleApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/UserRole?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/UserRole?id=${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

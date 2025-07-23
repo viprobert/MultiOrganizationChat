@@ -1,12 +1,12 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getChatReportAPI = async (reportRequest, token) => {
+export const getChatReportAPI = async (reportRequest) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatReport`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetChatReport`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(reportRequest),
@@ -25,13 +25,12 @@ export const getChatReportAPI = async (reportRequest, token) => {
   }
 };
 
-export const getAgentReportAPI = async (reportRequest, token) => {
+export const getAgentReportAPI = async (reportRequest) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetAgentReport`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetAgentReport`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(reportRequest),
@@ -50,13 +49,12 @@ export const getAgentReportAPI = async (reportRequest, token) => {
   }
 };
 
-export const getTagReportAPI = async (reportRequest, token) => {
+export const getTagReportAPI = async (reportRequest) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetTagReport`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetTagReport`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(reportRequest),
@@ -75,13 +73,12 @@ export const getTagReportAPI = async (reportRequest, token) => {
   }
 };
 
-export const getStatusReportAPI = async (reportRequest, token) => {
+export const getStatusReportAPI = async (reportRequest) => {
   try{
-      const response = await fetch(`${API_BASE_URL}/GroupMessages/GetStatusReport`, {
+      const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetStatusReport`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
         },
         body: JSON.stringify(reportRequest),
@@ -101,7 +98,7 @@ export const getStatusReportAPI = async (reportRequest, token) => {
   }
 }
 
-export const getSuperAdminReportAPI = async (startDate, endDate, orgId, token) => {
+export const getSuperAdminReportAPI = async (startDate, endDate, orgId) => {
   let url = `${API_BASE_URL}/Setting/SuperAdminReport?startDate=${startDate}&endDate=${endDate}`;
   const queryParams = new URLSearchParams();
 
@@ -112,11 +109,10 @@ export const getSuperAdminReportAPI = async (startDate, endDate, orgId, token) =
         url += `&${queryParams.toString()}`;
   }
   try{
-    const response = await fetch(url,{
+    const response = await fetchWithAuth(url,{
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       }
     });

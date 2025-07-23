@@ -33,8 +33,7 @@ const DashboardPage = () => {
     const [reportError, setReportError] = useState(null);
 
     const fetchReports = useCallback(async () => {
-        if (!user?.token) {
-            setReportError("User not authenticated.");
+        if (!user) {
             return;
         }
 
@@ -48,28 +47,28 @@ const DashboardPage = () => {
         };
 
         try {
-            const chatVolumeResponse = await getChatReportAPI(reportRequest, user.token);
+            const chatVolumeResponse = await getChatReportAPI(reportRequest);
             if (chatVolumeResponse.success) {
                 setChatVolumeData(chatVolumeResponse.data || []);
             } else {
                 throw new Error("Failed to fetch chat volume data.");
             }
 
-            const agentReportResponse = await getAgentReportAPI(reportRequest, user.token);
+            const agentReportResponse = await getAgentReportAPI(reportRequest);
             if (agentReportResponse.success) {
                 setAgentPerformanceData(agentReportResponse.data || []);
             } else {
                 throw new Error("Failed to fetch agent performance data.");
             }
 
-            const tagReportResponse = await getTagReportAPI(reportRequest, user.token);
+            const tagReportResponse = await getTagReportAPI(reportRequest);
             if (tagReportResponse.success) {
                 setTagAnalysisData(tagReportResponse.data || []);
             } else {
                 throw new Error("Failed to fetch tag analysis data.");
             }
 
-            const statusReportResponse = await getStatusReportAPI(reportRequest, user.token);
+            const statusReportResponse = await getStatusReportAPI(reportRequest);
             if (statusReportResponse.success){
                 setStatusAnalysisData(statusReportResponse.data || []);
             } else {
@@ -79,22 +78,29 @@ const DashboardPage = () => {
         } catch (err) {
             console.error("Error fetching reports:", err);
             setReportError(`Failed to load reports: ${err.message || "Unknown error."}`);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoadingReports(false);
         }
-    }, [user, startDate, endDate]);
+    }, [user, startDate, endDate, logout]);
 
     useEffect(() => {
-        fetchReports();
+        if(user){
+            fetchReports();
+        }
     }, [fetchReports]);
    
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);

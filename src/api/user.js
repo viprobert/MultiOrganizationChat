@@ -1,6 +1,7 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getAllUsersApi = async (orgId, token) => {
+export const getAllUsersApi = async (orgId) => {
   let url = `${API_BASE_URL}/User`;
   const queryParams = new URLSearchParams();
 
@@ -11,10 +12,9 @@ export const getAllUsersApi = async (orgId, token) => {
         url += `?${queryParams.toString()}`;
   }
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -33,12 +33,11 @@ export const getAllUsersApi = async (orgId, token) => {
   }
 };
 
-export const createUserApi = async (userData, token) => {
+export const createUserApi = async (userData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/User/Register`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/User/Register`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -58,12 +57,11 @@ export const createUserApi = async (userData, token) => {
   }
 };
 
-export const getUserByIdApi = async (id, token) => {
+export const getUserByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/User/GetUserById?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/User/GetUserById?id=${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -82,12 +80,11 @@ export const getUserByIdApi = async (id, token) => {
   }
 };
 
-export const updateUserApi = async (userData, token) => {
+export const updateUserApi = async (userData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/User/Update`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/User/Update`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -106,12 +103,11 @@ export const updateUserApi = async (userData, token) => {
   }
 };
 
-export const updateProfileApi = async (userData, token) => {
+export const updateProfileApi = async (userData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/User/UpdateProfile`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/User/UpdateProfile`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -130,12 +126,11 @@ export const updateProfileApi = async (userData, token) => {
   }
 };
 
-export const deleteUserApi = async (id, token) => {
+export const deleteUserApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/User?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/User?id=${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -159,8 +154,6 @@ export const checkUserApi = async (email) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        //'Authorization': `Bearer ${token}`,
-        // 'ngrok-skip-browser-warning': '69420',
         'ngrok-skip-browser-warning': 'true',
       }
     });
@@ -177,14 +170,12 @@ export const checkUserApi = async (email) => {
   }
 };
 
-export const changeAgentStatusApi = async (agentId, isOnline, token) => {
+export const changeAgentStatusApi = async (agentId, isOnline) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/User/ChangeStatus`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/User/ChangeStatus`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-        // 'ngrok-skip-browser-warning': '69420',
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ agentId, isOnline }),

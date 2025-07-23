@@ -94,7 +94,7 @@ const ChatConversation = ({
                 fileSize: 0
             };
 
-            await sendMessageApi(messageData, user.token);
+            await sendMessageApi(messageData);
         } catch (error) {
             console.error("Error shortening URL or sending message:", error);
             alert("Failed to send rating link. Please try again.");
@@ -262,7 +262,7 @@ const ChatConversation = ({
                                 </button>
                                 {selectedChat && ( 
                                     <button
-                                        onClick={() => onViewChatHistory(selectedChat.chatId, user.orgId, user.token)} // Call the new prop
+                                        onClick={() => onViewChatHistory(selectedChat.chatId, user.orgId)}
                                         style={{ padding: '0.5rem', borderRadius: '50%', background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.25rem', color: '#007bff' }}
                                         onMouseOver={e => e.currentTarget.style.backgroundColor = '#f0f0f0'}
                                         onMouseOut={e => e.currentTarget.style.backgroundColor = 'transparent'}

@@ -1,11 +1,11 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getTeamsAndAgentsApi = async (orgId, token) => {
+export const getTeamsAndAgentsApi = async (orgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetUsersByTeam?orgId=${orgId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetUsersByTeam?orgId=${orgId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -24,7 +24,7 @@ export const getTeamsAndAgentsApi = async (orgId, token) => {
   }
 };
 
-export const getAllTeamsApi = async (orgId, token) => {
+export const getAllTeamsApi = async (orgId) => {
   let url = `${API_BASE_URL}/Team`;
   const queryParams = new URLSearchParams();
 
@@ -35,10 +35,9 @@ export const getAllTeamsApi = async (orgId, token) => {
         url += `?${queryParams.toString()}`;
   }
   try {
-    const response = await fetch(url, {
+    const response = await fetchWithAuth(url, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`, 
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -57,12 +56,11 @@ export const getAllTeamsApi = async (orgId, token) => {
   }
 };
 
-export const createTeamApi = async (teamData, token) => {
+export const createTeamApi = async (teamData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Team`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Team`, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -82,12 +80,11 @@ export const createTeamApi = async (teamData, token) => {
   }
 };
 
-export const getTeamByIdApi = async (id, token) => {
+export const getTeamByIdApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Team/GetById?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Team/GetById?id=${id}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -106,12 +103,11 @@ export const getTeamByIdApi = async (id, token) => {
   }
 };
 
-export const updateTeamApi = async (teamData, token) => {
+export const updateTeamApi = async (teamData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Team`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Team`, {
       method: 'PUT',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -131,12 +127,11 @@ export const updateTeamApi = async (teamData, token) => {
   }
 };
 
-export const deleteTeamApi = async (id, token) => {
+export const deleteTeamApi = async (id) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/Team?id=${id}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/Team?id=${id}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

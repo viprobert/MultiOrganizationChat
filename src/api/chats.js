@@ -1,11 +1,11 @@
 import { API_BASE_URL } from '../config/api';
+import { fetchWithAuth } from './auth';
 
-export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) => {
+export const getAssignedChatsByAgentStatusApi = async (agentId, orgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetMessageByStatus?agentId=${agentId}&orgId=${orgId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetMessageByStatus?agentId=${agentId}&orgId=${orgId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -25,24 +25,22 @@ export const getAssignedChatsByAgentStatusApi = async (agentId, orgId, token) =>
 };
 
 //Get Latest 20 Messages
-export const getMessagesApi = async (chatId, orgId, token) => {
+export const getMessagesApi = async (chatId, orgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetChatMessages?chatId=${chatId}&orgId=${orgId}&count=20`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetChatMessages?chatId=${chatId}&orgId=${orgId}&count=20`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
     });
-
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
-    return data.data[0];
+    return data.data;
   } catch (error) {
     console.error("Error fetching chat messages:", error);
     throw error;
@@ -50,12 +48,11 @@ export const getMessagesApi = async (chatId, orgId, token) => {
 };
 
 //Get All Messages
-export const getMessagesHistoryApi = async (chatId, orgId, token) => {
+export const getMessagesHistoryApi = async (chatId, orgId) => {
   try{
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetMessagesHistory?chatId=${chatId}&orgId=${orgId}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetMessagesHistory?chatId=${chatId}&orgId=${orgId}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -67,7 +64,7 @@ export const getMessagesHistoryApi = async (chatId, orgId, token) => {
     }
 
     const data = await response.json();
-    return data.data[0];
+    return data.data;
   }
   catch (error) {
     console.error("Error fetching chat messages history: ", error);
@@ -75,13 +72,12 @@ export const getMessagesHistoryApi = async (chatId, orgId, token) => {
   }
 }
 
-export const seenMessageApi = async (orgId ,chatId, agentId, msgId, token) => {
+export const seenMessageApi = async (orgId ,chatId, agentId, msgId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/Seen`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/Seen`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId, msgId }),
@@ -99,13 +95,12 @@ export const seenMessageApi = async (orgId ,chatId, agentId, msgId, token) => {
   }
 };
 
-export const AssignMessageApi = async (orgId ,chatId, agentId, token) => {
+export const AssignMessageApi = async (orgId ,chatId, agentId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/AssignChatToAgent`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/AssignChatToAgent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId }),
@@ -123,13 +118,12 @@ export const AssignMessageApi = async (orgId ,chatId, agentId, token) => {
   }
 };
 
-export const AcceptMessageApi = async (orgId ,chatId, agentId, isAccept, token) => {
+export const AcceptMessageApi = async (orgId ,chatId, agentId, isAccept) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/AcceptRejectChatAssign`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/AcceptRejectChatAssign`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId, isAccept }),
@@ -147,13 +141,12 @@ export const AcceptMessageApi = async (orgId ,chatId, agentId, isAccept, token) 
   }
 };
 
-export const sendMessageApi = async (messageData, token) => {
+export const sendMessageApi = async (messageData) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/line/send`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/line/send`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify(messageData),
@@ -171,13 +164,12 @@ export const sendMessageApi = async (messageData, token) => {
   }
 };
 
-export const assignChatToAgentApi = async (orgId, chatId, agentId, token) => {
+export const assignChatToAgentApi = async (orgId, chatId, agentId) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/AssignChatToAgent`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/AssignChatToAgent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, agentId }),
@@ -195,13 +187,12 @@ export const assignChatToAgentApi = async (orgId, chatId, agentId, token) => {
   }
 };
 
-export const changeChatStatusApi = async (orgId, chatId, status, token) => {
+export const changeChatStatusApi = async (orgId, chatId, status) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/ChangeChatStatus`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/ChangeChatStatus`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
         'ngrok-skip-browser-warning': 'true',
       },
       body: JSON.stringify({ orgId, chatId, status }),
@@ -219,7 +210,7 @@ export const changeChatStatusApi = async (orgId, chatId, status, token) => {
   }
 };
 
-export const getFilteredChatsApi = async (params, token) => {
+export const getFilteredChatsApi = async (params) => {
   try {
     const queryString = new URLSearchParams({
       orgId: params.orgId,
@@ -233,10 +224,9 @@ export const getFilteredChatsApi = async (params, token) => {
       ...(params.pageSize && { pageSize: params.pageSize }),
     }).toString();
 
-    const response = await fetch(`${API_BASE_URL}/GroupMessages/GetAllChatsByOrgId?${queryString}`, {
+    const response = await fetchWithAuth(`${API_BASE_URL}/GroupMessages/GetAllChatsByOrgId?${queryString}`, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },
@@ -255,12 +245,11 @@ export const getFilteredChatsApi = async (params, token) => {
   }
 };
 
-export const customerRatingApi = async (rateData, token) => {
+export const customerRatingApi = async (rateData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/GroupMessages/GiveRating`, {
       method: 'POST',
       headers: {
-        //'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
         'ngrok-skip-browser-warning': 'true',
       },

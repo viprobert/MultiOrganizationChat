@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllUsersApi, createUserApi, getUserByIdApi, updateUserApi, deleteUserApi, changeAgentStatusApi } from '../api/user';
 import { getAllTeamsApi } from '../api/teams';
@@ -49,7 +49,7 @@ const UserPage = () => {
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -59,15 +59,16 @@ const UserPage = () => {
         }
     };
     
-    const fetchUsers = async () => {
-        if (authLoading || !user?.token) { 
+    const fetchUsers = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
             return;
         }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedUsers = await getAllUsersApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
+            const fetchedUsers = await getAllUsersApi(user?.isSuperAdmin ? null : user?.orgId);
             setUsers(fetchedUsers);
         } catch (err) {
             console.error("Error fetching users:", err);
@@ -75,12 +76,14 @@ const UserPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     const fetchDropdownData = async () => {
-        if (authLoading || !user?.token) { 
+        if (!user) {
+            setLoading(false);
             return;
         }
+
         setOrganizationsLoading(true); 
         setOrganizationsError(null)
         try {
@@ -89,20 +92,20 @@ const UserPage = () => {
             let orgs = [];
             
             if (user?.isSuperAdmin) {
-                orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
+                orgs = await getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId);
                 setAllOrganizations(orgs);
                 setOrganizationsLoading(false);
 
                 [teams, roles] = await Promise.all([
-                    getAllTeamsApi(null, user.token), 
-                    getAllUserRolesApi(null, user.token) 
+                    getAllTeamsApi(null), 
+                    getAllUserRolesApi(null) 
                 ]);
                 setAllTeamsAcrossOrgs(teams); 
                 setAllRolesAcrossOrgs(roles); 
             } else {
                 [teams, roles] = await Promise.all([
-                    getAllTeamsApi(user.orgId, user.token),
-                    getAllUserRolesApi(user.orgId, user.token)
+                    getAllTeamsApi(user.orgId),
+                    getAllUserRolesApi(user.orgId)
                 ]);
                 setAllAvailableTeams(teams); 
                 setAllAvailableRoles(roles);
@@ -118,12 +121,17 @@ const UserPage = () => {
             console.error("Error fetching teams or roles:", err);
             setOrganizationsError("Failed to load dropdown data: " + (err.message || "Unknown error."));
             setOrganizationsLoading(false);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         }
     };
 
     useEffect(() => {
+        if(user){
         fetchDropdownData();
         fetchUsers();
+        }
     }, [user, authLoading]); 
 
     useEffect(() => {
@@ -165,7 +173,7 @@ const UserPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const userData = await getUserByIdApi(userId, user.token);
+            const userData = await getUserByIdApi(userId);
             if (userData) {
                 setEditingUser(userData);
 
@@ -262,7 +270,7 @@ const UserPage = () => {
                     teamId: userForm.teamId || null,         
                     isActive: userForm.isActive
                 };
-                await updateUserApi(updatePayload, user.token);
+                await updateUserApi(updatePayload);
                 alert('User updated successfully!');
             } else {
                 const organizationId = user?.isSuperAdmin ? userForm.organizationId : user.orgId;
@@ -274,7 +282,7 @@ const UserPage = () => {
                     userRoleId: userForm.userRoleId || null, 
                     teamId: userForm.teamId || null,        
                 };
-                await createUserApi(createPayload, user.token);
+                await createUserApi(createPayload);
                 alert('User created successfully!');
             }
             setIsModalOpen(false); 
@@ -293,14 +301,14 @@ const UserPage = () => {
     };
 
     const handleDeleteConfirm = async () => {
-        if (!userToDelete || !user?.token) return;
+        if (!userToDelete) return;
 
         setIsSaving(true); 
         setError(null);
         setShowDeleteConfirm(false); 
 
         try {
-            await deleteUserApi(userToDelete.id, user.token);
+            await deleteUserApi(userToDelete.id);
             alert(`User "${userToDelete.username}" deleted successfully!`); 
             fetchUsers();
         } catch (err) {

@@ -67,24 +67,26 @@ const ChatPage = () => {
     }, [chatList]);
 
     const fetchAgentCounts = useCallback(async () => {
-        if (!user?.orgId || !user?.token || !user?.userId) {
+        if (!user?.orgId || !user?.userId) {
             console.warn("Missing user info for fetching agent counts.");
             return;
         }
         try {
-            const assignedChats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId, user.token);
+            const assignedChats = await getAssignedChatsByAgentStatusApi(user.userId, user.orgId);
             const allAssignedCount = assignedChats.filter(chat => chat.assignedAgentId !== null).length;
             const unAssignedCount = assignedChats.filter(chat => chat.assignedAgentId === null).length;
             const unreadAssignedCount = assignedChats.filter(chat => chat.unreadCount > 0).length;
             setAgentAssignedChatsCounts({ all: allAssignedCount, unread: unreadAssignedCount, unassigned: unAssignedCount });
         } catch (err) {
             console.error("Error fetching agent counts:", err);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         }
-    }, [user?.orgId, user?.token, user?.userId]);
+    }, [user?.orgId, user?.userId, logout]);
 
     const fetchChatList = useCallback(async (pageToFetch, resetList) => {
-        if (!user?.token) {
-            console.warn("Missing user token for fetching chat list.");
+        if (!user) {
             return;
         }
 
@@ -112,7 +114,7 @@ const ChatPage = () => {
                 params.searchTerm = searchTerm;
             }
 
-            const chats = await getFilteredChatsApi(params, user.token);
+            const chats = await getFilteredChatsApi(params);
 
             let finalFilteredChats = chats;
             if (selectedChatStatusFilter === 'Unread') {
@@ -143,10 +145,13 @@ const ChatPage = () => {
         } catch (err) {
             console.error("Error fetching chat list:", err);
             setChatListError("Failed to load chat list. " + (err.message || "Please try again."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setChatListLoading(false);
         }
-    }, [user, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, selectedChat]); 
+    }, [user, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, selectedChat, logout]); 
 
     const handleReceiveMessage = useCallback((message) => {
         setCurrentChatHistory(prevHistory => {
@@ -263,12 +268,12 @@ const ChatPage = () => {
     }, [fetchChatList, user?.userId]);
 
     const handleRejectChat = useCallback(async (chatId) => {
-        if (!user?.userId || !user?.orgId || !user?.token) {
+        if (!user?.userId || !user?.orgId) {
             console.error("User not authenticated for chat rejection.");
             return;
         }
         try {
-            await AcceptMessageApi(user.orgId, chatId, user.userId, false, user.token);
+            await AcceptMessageApi(user.orgId, chatId, user.userId, false);
             setChatList(prevChatList => prevChatList.filter(chat => chat.chatId !== chatId));
             if (selectedChat?.chatId === chatId) {
                 setSelectedChat(null);
@@ -283,8 +288,11 @@ const ChatPage = () => {
         } catch (error) {
             console.error("Error rejecting chat:", error);
             setActionPanelError("Failed to reject chat. Please try again.");
+            if (error.message === "Session expired. Please log in again.") {
+                logout();
+            }
         }
-    }, [user, fetchChatList, selectedChat, currentPage, fetchAgentCounts, agentClosedChat]);
+    }, [user, fetchChatList, selectedChat, currentPage, fetchAgentCounts, agentClosedChat, logout]);
 
     const handleChatSelect = useCallback(async (chat) => {
         if (!selectedChat || selectedChat.chatId !== chat.chatId) {
@@ -306,11 +314,10 @@ const ChatPage = () => {
                     agentOpenedChat(chat.chatId, user.userId);
                 }
 
-                const history = await getMessagesApi(chat.chatId, user.orgId, user.token);
+                const history = await getMessagesApi(chat.chatId, user.orgId);
                 setCurrentChatHistory(history);
                 setCurrentChatNote(history?.note || '');
                 setCurrentChatTags(history?.tagId ? [history.tagId] : []);
-
                 setSelectedChat(prevSelectedChat => ({
                     ...prevSelectedChat,
                     note: history.note,
@@ -321,7 +328,7 @@ const ChatPage = () => {
 
                 const chatInList = chatListRef.current.find(c => c.chatId === chat.chatId);
                 if (chatInList?.unreadCount > 0) {
-                    await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.id || null, user.token);
+                    await seenMessageApi(user.orgId, chat.chatId, user.userId, history.chatMessage?.id || null);
 
                     setChatList(prevChats => prevChats.map(c =>
                         c.chatId === chat.chatId ? { ...c, unreadCount: 0 } : c
@@ -338,16 +345,19 @@ const ChatPage = () => {
                 if (user?.userId) {
                     agentClosedChat(user.userId, selectedChat?.chatId);
                 }
+                if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
             } finally {
                 setIsActionPanelLoading(false);
             }
         }
-    }, [user, fetchAgentCounts, selectedChat, agentOpenedChat, agentClosedChat]);
+    }, [user, fetchAgentCounts, selectedChat, agentOpenedChat, agentClosedChat, logout]);
 
     useEffect(() => {
         const fetchchatPageData = async () => {
-            if (!user?.orgId || !user?.token || !user?.userId) {
-                setDashboardError("User organization, ID, or token not found. Please re-login.");
+            if (!user?.orgId || !user?.userId) {
+                setDashboardError("User organization, Id not found. Please re-login.");
                 setLoadingDashboard(false);
                 return;
             }
@@ -357,10 +367,10 @@ const ChatPage = () => {
                 setDashboardError(null);
 
                 const [channelsData, tagsData, allTags, teamsAgentsData] = await Promise.all([
-                    getAllChannelsApi(user.orgId, user.token),
-                    getChatsByTagApi(user.orgId, user.userId, user.token),
-                    getAllTagsApi(user.orgId, user.token),
-                    getTeamsAndAgentsApi(user.orgId, user.token)
+                    getAllChannelsApi(user.orgId),
+                    getChatsByTagApi(user.orgId, user.userId),
+                    getAllTagsApi(user.orgId),
+                    getTeamsAndAgentsApi(user.orgId)
                 ]);
                 setChannels(channelsData);
                 setTagsWithCounts(tagsData);
@@ -370,12 +380,15 @@ const ChatPage = () => {
             } catch (err) {
                 console.error("Error fetching dashboard initial data:", err);
                 setDashboardError("Failed to load dashboard data. " + (err.message || "Please try again."));
+                if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
             } finally {
                 setLoadingDashboard(false);
             }
         };
         fetchchatPageData();
-    }, [user, user?.orgId, user?.userId, user?.token, fetchAgentCounts]);
+    }, [user, user?.orgId, user?.userId, fetchAgentCounts, logout]);
 
     useEffect(() => {
         if (!loadingDashboard && !dashboardError) {
@@ -398,13 +411,15 @@ const ChatPage = () => {
     }, [currentPage, fetchChatList]);
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user) {
+            return;
+        }
         setIsActionPanelLoading(true);
         setActionPanelError(null);
 
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -415,13 +430,13 @@ const ChatPage = () => {
     };
 
     const handleAcceptChat = useCallback(async (chatId) => {
-        if (!user?.userId || !user?.orgId || !user?.token) {
+        if (!user?.userId || !user?.orgId) {
             console.error("User not authenticated for chat acceptance.");
             return;
         }
 
         try {
-            await AcceptMessageApi(user.orgId, chatId, user.userId, true, user.token);
+            await AcceptMessageApi(user.orgId, chatId, user.userId, true);
             await fetchAgentCounts();
 
             setSelectedChat(prevSelectedChat => {
@@ -447,8 +462,8 @@ const ChatPage = () => {
         }
     }, [user, fetchAgentCounts, setSelectedChat]);
 
-    const handleViewChatHistory = useCallback(async (chatId, orgId, token) => {
-        if (!chatId || !orgId || !token) {
+    const handleViewChatHistory = useCallback(async (chatId, orgId) => {
+        if (!chatId || !orgId) {
             console.error("Missing chat details for fetching full history.");
             setActionPanelError("Cannot fetch full history: Missing chat details.");
             return;
@@ -457,22 +472,25 @@ const ChatPage = () => {
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            const fullHistory = await getMessagesHistoryApi(chatId, orgId, token);
+            const fullHistory = await getMessagesHistoryApi(chatId, orgId);
             setCurrentChatHistory(fullHistory);
         } catch (err) {
             console.error("Error fetching full chat history:", err);
             setActionPanelError("Failed to load full chat history: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setIsActionPanelLoading(false);
         }
-    }, []);
+    }, [logout]);
 
     const handleSetNote = async () => {
-        if (!selectedChat?.chatId || !user?.token || currentChatNote === currentChatHistory?.note) return;
+        if (!selectedChat?.chatId || currentChatNote === currentChatHistory?.note) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            await setUserNoteApi(user.orgId, selectedChat.chatId, currentChatNote, user.token);
+            await setUserNoteApi(user.orgId, selectedChat.chatId, currentChatNote);
             setCurrentChatHistory(prev => ({ ...prev, note: currentChatNote }));
             setSelectedChat(prevSelectedChat => ({
                 ...prevSelectedChat,
@@ -487,11 +505,11 @@ const ChatPage = () => {
     };
 
     const handleSetTag = async (tagId) => {
-        if (!selectedChat?.chatId || !user?.token || !tagId || tagId === selectedChat.TagId) return;
+        if (!selectedChat?.chatId || !tagId || tagId === selectedChat.TagId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            await setUserTaggingApi(user.orgId, selectedChat.chatId, tagId, user.token);
+            await setUserTaggingApi(user.orgId, selectedChat.chatId, tagId);
             setCurrentChatTags([tagId]);
             setCurrentChatHistory(prev => ({ ...prev, tagId: tagId }));
             setSelectedChat(prevSelectedChat => ({
@@ -510,11 +528,11 @@ const ChatPage = () => {
     };
 
     const handleRemoveTag = async () => {
-        if (!selectedChat?.chatId || !user?.token || !selectedChat.TagId) return;
+        if (!selectedChat?.chatId || !selectedChat.TagId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            await removeTagFromUserApi(user.orgId, selectedChat.chatId, selectedChat.TagId, user.token);
+            await removeTagFromUserApi(user.orgId, selectedChat.chatId, selectedChat.TagId);
             setCurrentChatTags([]);
             setCurrentChatHistory(prev => ({ ...prev, tagId: null }));
             setSelectedChat(prevSelectedChat => ({
@@ -533,11 +551,11 @@ const ChatPage = () => {
     };
 
     const handleAssignAgent = async (agentId) => {
-        if (!selectedChat?.chatId || !user?.token || !agentId || selectedChat.assignedAgentId === agentId) return;
+        if (!selectedChat?.chatId || !agentId || selectedChat.assignedAgentId === agentId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            await assignChatToAgentApi(user.orgId, selectedChat.chatId, agentId, user.token);
+            await assignChatToAgentApi(user.orgId, selectedChat.chatId, agentId);
             setSelectedChat(prev => ({ ...prev, assignedAgentId: agentId }));
             setChatList(prevChats => prevChats.map(c =>
                 c.chatId === selectedChat.chatId ? { ...c, assignedAgentId: agentId } : c
@@ -552,11 +570,11 @@ const ChatPage = () => {
     };
 
     const handleChangeChatStatus = async (chatStatus) => {
-        if (!selectedChat?.chatId || !user?.token || !chatStatus || chatStatus === selectedChat.chatStatus) return;
+        if (!selectedChat?.chatId || !chatStatus || chatStatus === selectedChat.chatStatus) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
-            await changeChatStatusApi(user.orgId, selectedChat.chatId, chatStatus, user.token);
+            await changeChatStatusApi(user.orgId, selectedChat.chatId, chatStatus);
 
             setCurrentChatHistory(prev => ({ ...prev, ChatStatus: chatStatus }));
             setSelectedChat(prevSelectedChat => ({
@@ -578,7 +596,7 @@ const ChatPage = () => {
     };
 
     const handleSendMessage = async (content, messageType = 'text', fileName, fileType, audioDuration, fileSize) => {
-        if (!selectedChat?.chatId || !user?.token || (!content && messageType === 'text')) return;
+        if (!selectedChat?.chatId || (!content && messageType === 'text')) return;
 
         const messageData = {
             orgId: user.orgId,
@@ -595,7 +613,7 @@ const ChatPage = () => {
         };
 
         try {
-            await sendMessageApi(messageData, user.token);
+            await sendMessageApi(messageData);
             fetchAgentCounts();
         } catch (err) {
             console.error("Error sending message:", err);

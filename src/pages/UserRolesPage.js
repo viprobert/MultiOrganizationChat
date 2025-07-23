@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllUserRolesApi, createUserRoleApi, getUserRoleByIdApi, updateUserRoleApi, deleteUserRoleApi } from '../api/userrole';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -41,12 +41,12 @@ const UserRolesPage = () => {
     const canDeleteRole = user?.permissions?.includes('userrole_delete');
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user?.userId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -56,24 +56,31 @@ const UserRolesPage = () => {
         }
     };
 
-    const fetchUserRoles = async () => {
-        if (authLoading || !user?.token) return;
+    const fetchUserRoles = useCallback(async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedRoles = await getAllUserRolesApi(user?.isSuperAdmin ? null : user?.orgId, user.token);
+            const fetchedRoles = await getAllUserRolesApi(user?.isSuperAdmin ? null : user?.orgId);
             setUserRoles(fetchedRoles);
         } catch (err) {
             console.error("Error fetching user roles:", err);
             setError("Failed to load user roles: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     const fetchDropdownData = async () => {
-        if (authLoading || !user?.token) { 
+        if (!user) {
+            setLoading(false);
             return;
         }
         try {
@@ -81,18 +88,21 @@ const UserRolesPage = () => {
             let orgs = [];
             if (user?.isSuperAdmin){
                 [orgs, perms] = await Promise.all([
-                    getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId, user.token),
-                    getPermissionToAssignApi(user.token)
+                    getAllOrganizationsApi(user?.isSuperAdmin ? null : user?.orgId),
+                    getPermissionToAssignApi()
                 ]);
                 setAllPermissions(perms);
                 setAllOrganizations(orgs);
             }
             else{
-                perms = await getPermissionToAssignApi(user.token)
+                perms = await getPermissionToAssignApi()
                 setAllPermissions(perms);
             }           
         } catch (err) {
             console.error("Error fetching permissions or organizations:", err);
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         }
         finally{
             setPermissionsLoading(false);
@@ -101,8 +111,10 @@ const UserRolesPage = () => {
     };
 
     useEffect(() => {
-        fetchUserRoles();
-        fetchDropdownData();
+        if (user){
+            fetchUserRoles();
+            fetchDropdownData();
+        }
     }, [user, authLoading]);
 
     const handleAddRoleClick = () => {
@@ -116,7 +128,7 @@ const UserRolesPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const roleData = await getUserRoleByIdApi(roleId, user.token);
+            const roleData = await getUserRoleByIdApi(roleId);
             if (roleData) {
                 setEditingRole(roleData);
                 const currentPermissionIds = roleData.permissions ? roleData.permissions.map(p => p.id) : [];
@@ -209,7 +221,7 @@ const UserRolesPage = () => {
                     roleName: roleForm.roleName,
                     description: roleForm.description,
                     permissionId: roleForm.selectedPermissionIds   
-                }, user.token);
+                });
                 alert('User Role updated successfully!');
             } else {
                 const organizationId = user?.isSuperAdmin ? roleForm.organizationId : user.orgId;
@@ -218,7 +230,7 @@ const UserRolesPage = () => {
                     roleName: roleForm.roleName,
                     description: roleForm.description,
                     permissionId: roleForm.selectedPermissionIds
-                }, user.token);
+                });
                 alert('User Role created successfully!');
             }
             setIsModalOpen(false); 
@@ -244,7 +256,7 @@ const UserRolesPage = () => {
         setShowDeleteConfirm(false);
 
         try {
-            await deleteUserRoleApi(roleToDelete.id, user.token);
+            await deleteUserRoleApi(roleToDelete.id);
             alert(`User Role "${roleToDelete.roleName}" deleted successfully!`);
             fetchUserRoles();
         } catch (err) {

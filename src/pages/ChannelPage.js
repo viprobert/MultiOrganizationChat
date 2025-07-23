@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { getAllChannelsApi, createChannelApi, getChannelByIdApi, updateChannelApi, deleteChannelApi } from '../api/channels';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -30,12 +30,12 @@ const ChannelPage = () => {
     const canDeleteChannel = user?.permissions?.includes('channel_delete');
 
     const handleAgentStatusToggle = async () => {
-        if (!user?.userId || !user?.token) return;
+        if (!user?.userId) return;
         setIsActionPanelLoading(true);
         setActionPanelError(null);
         try {
             const newStatus = !agentOnlineStatus;
-            await changeAgentStatusApi(user.userId, newStatus, user.token);
+            await changeAgentStatusApi(user.userId, newStatus);
             setAgentOnlineStatus(newStatus);
         } catch (err) {
             console.error("Failed to change agent status:", err);
@@ -51,24 +51,32 @@ const ChannelPage = () => {
         return text.substring(0, maxLength) + '...';
     };
 
-    const fetchChannels = async () => {
-        if (authLoading || !user?.token) return;
+    const fetchChannels = useCallback(async () => {
+        if (!user?.orgId) {
+            setLoading(false);
+            return;
+        }
 
         setLoading(true);
         setError(null);
         try {
-            const fetchedChannels = await getAllChannelsApi(user.orgId, user.token);
+            const fetchedChannels = await getAllChannelsApi(user.orgId);
             setChannels(fetchedChannels);
         } catch (err) {
             console.error("Error fetching channels:", err);
             setError("Failed to load channels: " + (err.message || "Unknown error."));
+            if (err.message === "Session expired. Please log in again.") {
+                logout();
+            }
         } finally {
             setLoading(false);
         }
-    };
+    }, [user, logout]);
 
     useEffect(() => {
-        fetchChannels();
+        if (user){
+            fetchChannels();
+        }
     }, [user, authLoading]); 
 
     const handleAddChannelClick = () => {
@@ -82,7 +90,7 @@ const ChannelPage = () => {
         setFormError(null);
         setIsSaving(true); 
         try {
-            const channelData = await getChannelByIdApi(channelId, user.token);
+            const channelData = await getChannelByIdApi(channelId);
             if (channelData) {
                 setEditingChannel(channelData);
                 setChannelForm({
@@ -145,7 +153,7 @@ const ChannelPage = () => {
                     webhookSecret: channelForm.webhookSecret,
                     otherConfigJson: channelForm.otherConfigJson,
                     externalChannelId: channelForm.externalChannelId
-                }, user.token);
+                });
                 alert('Channel updated successfully!');
             } else {
                 await createChannelApi({
@@ -156,7 +164,7 @@ const ChannelPage = () => {
                     webhookSecret: channelForm.webhookSecret,
                     otherConfigJson: channelForm.otherConfigJson,
                     externalChannelId: channelForm.externalChannelId,
-                }, user.token);
+                });
                 alert('Channel created successfully!');
             }
             setIsModalOpen(false); 
@@ -182,7 +190,7 @@ const ChannelPage = () => {
         setShowDeleteConfirm(false); 
 
         try {
-            await deleteChannelApi(channelToDelete.id, user.token);
+            await deleteChannelApi(channelToDelete.id);
             alert(`Channel "${channelToDelete.name}" deleted successfully!`);
             fetchChannels();
         } catch (err) {
