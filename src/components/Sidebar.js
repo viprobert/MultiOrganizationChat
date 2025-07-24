@@ -90,7 +90,7 @@ const Sidebar = ({
                 <div style={{ marginBottom: '1.5rem', backgroundColor: '#f9f9f9', padding: '1rem', borderRadius: '1rem', boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)', border: '1px solid #eee' }}>
                     <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', marginBottom: '0.75rem', color: '#333', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <span style={{ display: 'flex', alignItems: 'center' }}>
-                            <FontAwesomeIcon icon={faRoute} style={{ marginRight: '0.5rem', color: '#007bff' }} beat />
+                            <FontAwesomeIcon icon={faRoute} style={{ marginRight: '0.5rem', color: '#007bff' }} bounce />
                             Navigation
                         </span>
                     </h3>
@@ -101,7 +101,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/dashboard') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/dashboard') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faLaptop} style={{ marginRight: '0.5rem' }} beat />
+                                    <FontAwesomeIcon icon={faLaptop} style={{ marginRight: '0.5rem' }} />
                                     Dashboard
                                 </Link>
                             </li>
@@ -112,7 +112,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/superadmin_dashboard') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/superadmin_dashboard') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faLaptop} style={{ marginRight: '0.5rem' }} beat />
+                                    <FontAwesomeIcon icon={faLaptop} style={{ marginRight: '0.5rem' }} />
                                     Dashboard
                                 </Link>
                             </li>
@@ -123,7 +123,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/chat') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/chat') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faComment} style={{ marginRight: '0.5rem' }} beat />
+                                    <FontAwesomeIcon icon={faComment} style={{ marginRight: '0.5rem' }} />
                                     Chat
                                 </Link>
                             </li>
@@ -134,7 +134,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/organization') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/organization') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faGlobe} style={{ marginRight: '0.5rem' }}  spin/>
+                                    <FontAwesomeIcon icon={faGlobe} style={{ marginRight: '0.5rem' }} />
                                     Organization
                                 </Link>
                             </li>
@@ -145,7 +145,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/channel') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/channel') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faSatelliteDish} style={{ marginRight: '0.5rem' }} beat />
+                                    <FontAwesomeIcon icon={faSatelliteDish} style={{ marginRight: '0.5rem' }} />
                                     Channel
                                 </Link>
                             </li>
@@ -156,7 +156,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/assign-chat') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/assign-chat') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '0.5rem' }} beat />
+                                    <FontAwesomeIcon icon={faUserPlus} style={{ marginRight: '0.5rem' }} />
                                     Assign Chats
                                 </Link>
                             </li>
@@ -167,7 +167,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/user-roles') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/user-roles') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faUserTie} style={{ marginRight: '0.5rem' }} beat/>
+                                    <FontAwesomeIcon icon={faUserTie} style={{ marginRight: '0.5rem' }}/>
                                     User Roles
                                 </Link>
                             </li>
@@ -178,7 +178,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/teams') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/teams') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faPeopleGroup} style={{ marginRight: '0.5rem' }} bounce />
+                                    <FontAwesomeIcon icon={faPeopleGroup} style={{ marginRight: '0.5rem' }} />
                                     Teams
                                 </Link>
                             </li>
@@ -189,7 +189,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/users') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/users') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faUserAstronaut} style={{ marginRight: '0.5rem' }} beat/>
+                                    <FontAwesomeIcon icon={faUserAstronaut} style={{ marginRight: '0.5rem' }}/>
                                     Users
                                 </Link>
                             </li>
@@ -200,7 +200,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/permission') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/permission') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faHand} style={{ marginRight: '0.5rem' }} shake/>
+                                    <FontAwesomeIcon icon={faHand} style={{ marginRight: '0.5rem' }}/>
                                     Permission
                                 </Link>
                             </li>
@@ -211,7 +211,7 @@ const Sidebar = ({
                                     onMouseOver={e => { if (location.pathname !== '/tag') e.currentTarget.style.backgroundColor = '#f0f0f0'; }}
                                     onMouseOut={e => { if (location.pathname !== '/tag') e.currentTarget.style.backgroundColor = 'transparent'; }}
                                 >
-                                    <FontAwesomeIcon icon={faTag} style={{ marginRight: '0.5rem' }} beat/>
+                                    <FontAwesomeIcon icon={faTag} style={{ marginRight: '0.5rem' }}/>
                                     Tags
                                 </Link>
                             </li>
@@ -234,7 +234,7 @@ const Sidebar = ({
                     onMouseOver={e => e.currentTarget.style.backgroundColor = '#c82333'}
                     onMouseOut={e => e.currentTarget.style.backgroundColor = '#dc3545'}
                 >
-                    <FontAwesomeIcon icon={faPowerOff} style={{ marginRight: '0.5rem' }} />
+                    <FontAwesomeIcon icon={faPowerOff} style={{ marginRight: '0.5rem' }} bounce />
                     Logout
                 </button>
             </div>

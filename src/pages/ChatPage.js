@@ -190,7 +190,7 @@ const ChatPage = () => {
             }
         });
         fetchAgentCounts();
-    }, [selectedChat, user?.userId, fetchChatList, fetchAgentCounts]); 
+    }, [selectedChat, fetchChatList, fetchAgentCounts]); 
 
     const handleChatUpdated = useCallback((chatUpdate) => {
         const currentChatList = chatListRef.current;
@@ -248,7 +248,7 @@ const ChatPage = () => {
         });
 
         fetchAgentCounts();
-    }, [fetchChatList, fetchAgentCounts, selectedChat]);
+    }, [fetchChatList, fetchAgentCounts]);
 
 
     const { isConnected: isSignalRConnected, error: signalRError, agentOpenedChat, agentClosedChat } = useSignalR(
@@ -265,7 +265,7 @@ const ChatPage = () => {
         setHasMoreChats(true);
         fetchChatList(1, true);
 
-    }, [fetchChatList, user?.userId]);
+    }, [fetchChatList]);
 
     const handleRejectChat = useCallback(async (chatId) => {
         if (!user?.userId || !user?.orgId) {
@@ -402,7 +402,7 @@ const ChatPage = () => {
                 }
             }
         }
-    }, [loadingDashboard, dashboardError, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, fetchChatList]);
+    }, [loadingDashboard, dashboardError, selectedChannelId, selectedChatStatusFilter, selectedTagIdFilter, searchTerm, fetchChatList, currentPage]);
 
     useEffect(() => {
         if (currentPage > 1) {

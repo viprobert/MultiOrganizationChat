@@ -237,16 +237,34 @@ const ChatConversation = ({
                                 />
                                 <div>
                                     <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', margin: 0 }}>{selectedChat.displayname}</h2>
-                                    <p style={{ fontSize: '0.875rem', color: '#555', margin: 0 }}>
-                                        {platformIcons[selectedChat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>}
-                                        Status: {selectedChat.chatStatus}
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.25rem', marginTop: '0.25rem' }}>
+                                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', backgroundColor: '#e0f2ff', color: '#007bff', fontSize: '0.9rem', padding: '0.125rem 0.5rem', borderRadius: '10px' }}>
+                                            {platformIcons[selectedChat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>} 
+                                            {selectedChat.channelName}
+                                        </span>
+                                        <span style={{
+                                            fontSize: '0.9rem',
+                                            padding: '0.125rem 0.5rem',
+                                            borderRadius: '9999px',
+                                            fontWeight: '600',
+                                            backgroundColor: selectedChat.chatStatus === 'Active' || selectedChat.chatStatus === 'InProgress' ? '#d4edda' :
+                                                            selectedChat.chatStatus === 'pending' ? '#fff3cd' :
+                                                            selectedChat.chatStatus === 'assigned' ? '#e0f2ff' :
+                                                            selectedChat.chatStatus === 'closed' ? '#f8d7da' : '#eee',
+                                            color: selectedChat.chatStatus === 'Active' || selectedChat.chatStatus === 'InProgress' ? '#155724' :
+                                                selectedChat.chatStatus === 'Pending' ? '#856404' :
+                                                selectedChat.chatStatus === 'Assigned' ? '#004085' :
+                                                selectedChat.chatStatus === 'Closed' ? '#721c24' : '#333'
+                                        }}>
+                                            {selectedChat.chatStatus}
+                                        </span>
                                         {currentTagName && (
-                                            <span style={{ marginLeft: '0.5rem', backgroundColor: '#e6e0ff', color: '#6610f2', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.75rem', fontWeight: '600' }}>
+                                            <span style={{ marginLeft: '0.5rem', backgroundColor: '#e6e0ff', color: '#6610f2', padding: '0.125rem 0.5rem', borderRadius: '9999px', fontSize: '0.9rem', fontWeight: '600' }}>
                                                 <FontAwesomeIcon icon={faTag} style={{ marginRight: '0.25rem' }} />
                                                 {currentTagName}
                                             </span>
                                         )}
-                                    </p>
+                                    </div>
                                 </div>
                             </div>
 

@@ -1,4 +1,3 @@
-import { TbRuler } from 'react-icons/tb';
 import { API_BASE_URL } from '../config/api';
 
 let accessToken = null;

@@ -140,7 +140,7 @@ export const AuthProvider = ({ children }) => {
         setForgotPasswordLoading(true);
         setForgotPasswordError(null);
         try {
-            const response = await checkUserApi(email);
+            await checkUserApi(email);
             setForgotPasswordLoading(false);
             return { success: true };
         } catch (err) {

@@ -77,7 +77,7 @@ const ChannelPage = () => {
         if (user){
             fetchChannels();
         }
-    }, [user, authLoading]); 
+    }, [user, authLoading, fetchChannels]); 
 
     const handleAddChannelClick = () => {
         setEditingChannel(null); 
@@ -343,7 +343,7 @@ const ChannelPage = () => {
                                                         style={{ background: 'none', border: 'none', color: '#dc3545', cursor: 'pointer', fontSize: '1.1rem' }}
                                                         title="Delete Channel"
                                                     >
-                                                        <FontAwesomeIcon icon={faTrashAlt} />
+                                                        <FontAwesomeIcon icon={faTrashAlt}/>
                                                     </button>
                                                 )}
                                             </td>

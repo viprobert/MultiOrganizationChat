@@ -403,7 +403,7 @@ const AuthPage = () => {
         currentAuthStageUI = (
             <form onSubmit={handleInitialLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                 <h2 className='auth-title'>
-                    <FontAwesomeIcon icon={faUser} style={{ fontSize: '2rem', marginRight: '0.75rem' }} bounce/>
+                    <FontAwesomeIcon icon={faUser} style={{ fontSize: '2rem', marginRight: '0.75rem' }}/>
                     Login
                 </h2>
                 <div>

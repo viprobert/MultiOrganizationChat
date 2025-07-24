@@ -106,8 +106,6 @@ const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons 
                             <span style={{ backgroundColor: '#ff4444', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.125rem 0.5rem', borderRadius: '9999px', flexShrink: 0 }}>
                                 {chat.unreadCount}
                             </span>
-                            // <span style={{ backgroundColor: '#ff4444', color: 'white', fontSize: '0.75rem', fontWeight: 'bold', padding: '0.125rem', borderRadius: '50%', width: '0.75rem', height: '0.75rem', display: 'inline-block', flexShrink: 0 }}>
-                            // </span>
                         )}
                     </div>
                     <p style={{
@@ -118,7 +116,6 @@ const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons 
                         marginTop: '0.25rem'
                     }}>
                         {getLatestMessagePreview(chat.chatMessage) || 'No messages'}
-                        {/* {chat.chatMessage?.content || 'No messages'} */}
                     </p>
                     <p style={{ fontSize: '0.75rem', color: '#777', marginTop: '0.25rem' }}>
                         {formatTimestamp(chat.latestMsgTime)}
@@ -127,7 +124,7 @@ const ChatItem = ({ chat, isSelected, onSelect, allAvailableTags, platformIcons 
                         
                         <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', backgroundColor: '#e0f2ff', color: '#007bff', fontSize: '0.75rem', padding: '0.125rem 0.5rem', borderRadius: '9999px' }}>
                             {platformIcons[chat.platfrom] || <FontAwesomeIcon icon={faPaperPlane} style={{color: '#777'}}/>} 
-                            {chat.platfrom}
+                            {chat.channelName}
                         </span>
                         
                         {currentTagName && (
